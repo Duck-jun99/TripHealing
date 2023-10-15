@@ -1,4 +1,4 @@
-package com.healingapp.triphealing
+package com.healingapp.triphealing.view
 
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.healingapp.triphealing.R
 import com.healingapp.triphealing.databinding.FragmentProfileBinding
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.viewmodel.post.NetworkViewModel

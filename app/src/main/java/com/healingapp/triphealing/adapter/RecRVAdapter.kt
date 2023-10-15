@@ -1,4 +1,4 @@
-package com.healingapp.triphealing
+package com.healingapp.triphealing.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,14 +7,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.healingapp.triphealing.R
 import com.healingapp.triphealing.network.post.ItemRecRV
 import com.healingapp.triphealing.secret.Secret
 
-class LatestRvAdapter(val itemList: ArrayList<ItemRecRV>) :
-    RecyclerView.Adapter<LatestRvAdapter.BoardViewHolder>() {
+class RecRVAdapter(val itemList: ArrayList<ItemRecRV>) :
+    RecyclerView.Adapter<RecRVAdapter.BoardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_famrv_post, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_recrv_post, parent, false)
         return BoardViewHolder(view)
     }
 
@@ -33,9 +34,9 @@ class LatestRvAdapter(val itemList: ArrayList<ItemRecRV>) :
 
 
     inner class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tv_title = itemView.findViewById<TextView>(R.id.tv_fam_rv_title)
-        val tv_author = itemView.findViewById<TextView>(R.id.tv_fam_rv_author)
-        val img = itemView.findViewById<ImageView>(R.id.img_fam_rv)
+        val tv_title = itemView.findViewById<TextView>(R.id.tv_rv_title)
+        val tv_author = itemView.findViewById<TextView>(R.id.tv_rv_author)
+        val img = itemView.findViewById<ImageView>(R.id.img_rv)
 
 
     }

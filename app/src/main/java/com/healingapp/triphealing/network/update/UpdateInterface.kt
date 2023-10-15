@@ -11,6 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
@@ -19,10 +20,10 @@ interface UpdateInterface {
     @JvmSuppressWildcards
     @POST(value = Secret.UPDATE_VALUE)
     @Headers(
-        "accept: application/json",
-        "content-type: application/x-www-form-urlencoded; charset=utf-8"
+        "accept: application/json"
     )
     fun getNetwork(
+        @Header("Authorization") token:String,
         @Field("useremail") useremail:String,
         //@Field("password") password:String,
         @Field("nickname") nickname:String,

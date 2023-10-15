@@ -1,5 +1,5 @@
 
-package com.healingapp.triphealing
+package com.healingapp.triphealing.view
 
 import android.os.Bundle
 import android.util.Log
@@ -9,18 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.findFragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
-import com.google.gson.JsonArray
 import com.healingapp.triphealing.databinding.FragmentJoinBinding
 import com.healingapp.triphealing.model.signup.NetworkSignUpResponse
-import com.healingapp.triphealing.model.user.NetworkUserResponse
 import com.healingapp.triphealing.network.signup.SignUpInterface
-import com.healingapp.triphealing.viewmodel.user.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback

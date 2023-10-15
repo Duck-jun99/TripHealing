@@ -74,6 +74,7 @@ class LoginActivity : AppCompatActivity() {
                             val intent = Intent(this, MainActivity::class.java)
                             intent.putExtra("id", id)
                             intent.putExtra("pw", pw)
+                            intent.putExtra("token", response.token)
                             startActivity(intent)
                             finish()
                         }

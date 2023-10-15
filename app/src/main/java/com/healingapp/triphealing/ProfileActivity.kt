@@ -1,13 +1,13 @@
 package com.healingapp.triphealing
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.ArrayAdapter
-import androidx.lifecycle.Observer
+import android.service.voice.VoiceInteractionSession.ActivityId
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.healingapp.triphealing.databinding.ActivityProfileBinding
+import com.healingapp.triphealing.view.ProfileFragment
+import com.healingapp.triphealing.view.UpdateFragment
 import com.healingapp.triphealing.viewmodel.post.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
 
@@ -18,14 +18,19 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var viewModelPost: NetworkViewModel
     private lateinit var viewModelUser: UserViewModel
 
+    lateinit var id: String
+    lateinit var pw: String
+    lateinit var token: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val id = intent.getStringExtra("id")
-        val pw = intent.getStringExtra("pw")
+        id = intent.getStringExtra("id").toString()
+        pw = intent.getStringExtra("pw").toString()
+        token = intent.getStringExtra("token").toString()
 
         //ViewModel 가져오기
         viewModelPost = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[NetworkViewModel::class.java]
@@ -56,4 +61,5 @@ class ProfileActivity : AppCompatActivity() {
         }
 
     }
+
 }

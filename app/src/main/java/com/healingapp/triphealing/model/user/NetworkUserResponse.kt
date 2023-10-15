@@ -15,6 +15,10 @@ data class NetworkUserResponse(
     val code: String,
 
     @Expose
+    @SerializedName(value = "token")
+    val token: String,
+
+    @Expose
     @SerializedName(value = "user_info")
     val userInfo: UserInfo
 

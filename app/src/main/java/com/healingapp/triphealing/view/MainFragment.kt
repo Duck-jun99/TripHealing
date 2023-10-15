@@ -13,12 +13,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.healingapp.triphealing.FamRvAdapter
-import com.healingapp.triphealing.LatestRvAdapter
+import com.healingapp.triphealing.adapter.FamRvAdapter
+import com.healingapp.triphealing.adapter.LatestRvAdapter
 import com.healingapp.triphealing.MainActivity
 import com.healingapp.triphealing.ProfileActivity
 import com.healingapp.triphealing.R
-import com.healingapp.triphealing.RecRVAdapter
+import com.healingapp.triphealing.adapter.RecRVAdapter
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.databinding.FragmentMainBinding
 import com.healingapp.triphealing.network.post.ItemRecRV
@@ -49,6 +49,7 @@ class MainFragment : Fragment() {
 
         val id = (activity as MainActivity).id
         val pw = (activity as MainActivity).pw
+        val token = (activity as MainActivity).token
 
         /// 추후에 수정해야 하는 부분
         val recRvitemList = ArrayList<ItemRecRV>()
@@ -109,8 +110,8 @@ class MainFragment : Fragment() {
             val intent = Intent(context, ProfileActivity::class.java)
             intent.putExtra("id",id)
             intent.putExtra("pw",pw)
+            intent.putExtra("token",token)
             startActivity(intent)
-
         }
 
 

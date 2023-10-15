@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var id:String
     lateinit var pw:String
+    lateinit var token:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         id = intent.getStringExtra("id").toString() // LoginActivity에서 전달된 데이터 읽기
         pw = intent.getStringExtra("pw").toString()
+        token = intent.getStringExtra("token").toString()
 
 
         viewModelPost = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[NetworkViewModel::class.java]
