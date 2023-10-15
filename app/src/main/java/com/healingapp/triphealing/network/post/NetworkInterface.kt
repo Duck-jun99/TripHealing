@@ -1,6 +1,6 @@
 package com.healingapp.triphealing.network.post
 
-import com.healingapp.triphealing.Secret
+import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.post.NetworkResponse
 import retrofit2.Call
 import retrofit2.http.GET

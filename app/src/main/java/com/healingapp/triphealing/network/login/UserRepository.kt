@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.healingapp.triphealing.Secret
+import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.user.NetworkUserResponse
 import okhttp3.OkHttpClient
 import retrofit2.Call

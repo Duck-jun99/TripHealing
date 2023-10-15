@@ -12,8 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import coil.load
-import coil.transform.CircleCropTransformation
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.FamRvAdapter
 import com.healingapp.triphealing.LatestRvAdapter
@@ -21,7 +19,7 @@ import com.healingapp.triphealing.MainActivity
 import com.healingapp.triphealing.ProfileActivity
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.RecRVAdapter
-import com.healingapp.triphealing.Secret
+import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.databinding.FragmentMainBinding
 import com.healingapp.triphealing.network.post.ItemRecRV
 import com.healingapp.triphealing.viewmodel.post.NetworkViewModel

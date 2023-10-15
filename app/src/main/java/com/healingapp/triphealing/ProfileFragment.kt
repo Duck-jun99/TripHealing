@@ -10,8 +10,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.healingapp.triphealing.databinding.FragmentMainBinding
 import com.healingapp.triphealing.databinding.FragmentProfileBinding
+import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.viewmodel.post.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
 

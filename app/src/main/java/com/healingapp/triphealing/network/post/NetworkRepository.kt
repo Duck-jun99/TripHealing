@@ -1,13 +1,11 @@
 package com.healingapp.triphealing.network.post
 
 import android.util.Log
-import androidx.core.content.res.TypedArrayUtils.getString
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.healingapp.triphealing.R
-import com.healingapp.triphealing.Secret
+import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.post.NetworkResponse
 import okhttp3.OkHttpClient
 import retrofit2.Call

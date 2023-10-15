@@ -184,7 +184,7 @@ fabric.properties
 
 !/gradle/wrapper/gradle-wrapper.jar
 
-/app/src/main/java/com.healingapp.triphealing/Secret.kt
+/app/src/main/java/com.healingapp.triphealing/secret/
 /app/src/main/res/
 
 # End of https://www.toptal.com/developers/gitignore/api/android,kotlin,androidstudio

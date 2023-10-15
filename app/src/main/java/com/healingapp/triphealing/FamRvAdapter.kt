@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.network.post.ItemRecRV
+import com.healingapp.triphealing.secret.Secret
 
 class FamRvAdapter(val itemList: ArrayList<ItemRecRV>) :
     RecyclerView.Adapter<FamRvAdapter.BoardViewHolder>() {

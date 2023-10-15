@@ -1,4 +1,4 @@
-package com.healingapp.triphealing
+package com.healingapp.triphealing.secret
 
 object Secret {
     const val BASE_URL = "http://byoungjun320.ddns.net:8000/"
