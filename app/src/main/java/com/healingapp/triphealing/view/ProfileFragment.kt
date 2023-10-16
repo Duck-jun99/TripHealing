@@ -9,12 +9,14 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.databinding.FragmentProfileBinding
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.viewmodel.post.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -23,6 +25,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var viewModelPost: NetworkViewModel
     private lateinit var viewModelUser: UserViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         // ProfileActivity에서 설정한 ViewModel 가져오기
         viewModelPost = ViewModelProvider(requireActivity())[NetworkViewModel::class.java]
         viewModelUser = ViewModelProvider(requireActivity())[UserViewModel::class.java]
@@ -53,6 +57,8 @@ class ProfileFragment : Fragment() {
 
                 //로그인 되어 있을 시,
                 if(response.code=="0000"){
+
+
                     Glide.with(this)
                         .load(Secret.MEDIA_URL+response.userInfo.profileImg)
                         .error(R.drawable.group_24)
@@ -105,6 +111,7 @@ class ProfileFragment : Fragment() {
                 }
             }
         })
+
 
     }
 

@@ -47,6 +47,12 @@ class SettingFragment : Fragment() {
         viewModelPost = ViewModelProvider(requireActivity())[NetworkViewModel::class.java]
         viewModelUser = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
+        binding.loginbtn.setOnClickListener {
+            val intent = Intent(context, LoginActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+
 
         viewModelUser.getNetworkUserResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
             if (response != null && response.code == "0000"){
@@ -65,13 +71,6 @@ class SettingFragment : Fragment() {
                     .load(R.drawable.group_24)
                     .error(R.drawable.group_24)
                     .into(binding.imgProfile)
-
-                binding.loginbtn.setOnClickListener {
-                    val intent = Intent(context, LoginActivity::class.java)
-                    startActivity(intent)
-                    requireActivity().finish()
-
-                }
 
 
             }

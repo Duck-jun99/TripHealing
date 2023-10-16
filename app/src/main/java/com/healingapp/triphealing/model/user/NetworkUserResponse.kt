@@ -74,6 +74,19 @@ data class Propensity(
     val option5: String,
 )
 
+data class SignUpData(
+
+    val option1: String,
+
+    val option2: String,
+
+    val option3: String,
+
+    val option4: String,
+
+    val option5: String,
+)
+
 data class GetData(
     val getData: List<NetworkUserResponse>
 )

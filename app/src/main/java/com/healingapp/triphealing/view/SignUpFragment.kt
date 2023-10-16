@@ -9,8 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.findFragment
+import com.google.gson.Gson
 import com.healingapp.triphealing.databinding.FragmentJoinBinding
 import com.healingapp.triphealing.model.signup.NetworkSignUpResponse
+import com.healingapp.triphealing.model.user.Propensity
+import com.healingapp.triphealing.model.user.SignUpData
 import com.healingapp.triphealing.network.signup.SignUpInterface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,8 +56,13 @@ class SignUpFragment : Fragment() {
             var joinPW2:String = binding.etJoinPW.text.toString()
             var joinEmail:String = binding.etJoinEmail.text.toString()
 
-            val joinPropensity = listOf(
-                mapOf("option1" to "enfp", "option2" to "hi", "option3" to "", "option4" to "", "option5" to ""))
+            //val joinPropensity = listOf(
+            //    mapOf("option1" to "enfp", "option2" to "hi", "option3" to "", "option4" to "", "option5" to ""))
+
+            val joinPropensity = SignUpData("", "","","","")
+
+            val gson = Gson()
+            val json = gson.toJson(joinPropensity)
 
             Log.e("joinID", joinID)
             Log.e("joinPW1", joinPW1)
@@ -62,7 +70,7 @@ class SignUpFragment : Fragment() {
             Log.e("joinEmail", joinEmail)
             scope.launch {
 
-                signUpInterface.getNetwork(joinID,joinPW1,joinPW2,joinEmail,joinPropensity).enqueue(object : Callback<NetworkSignUpResponse>
+                signUpInterface.getNetwork(joinID,joinPW1,joinPW2,joinEmail,json).enqueue(object : Callback<NetworkSignUpResponse>
                 {
                     //서버 요청 성공
                     override fun onResponse(call: Call<NetworkSignUpResponse>, response: Response<NetworkSignUpResponse>) {

@@ -12,13 +12,18 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.healingapp.triphealing.databinding.ActivityLoginBinding
 import com.healingapp.triphealing.view.MainFragment
+import com.healingapp.triphealing.viewmodel.user.UserChangeViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var userViewModel: UserViewModel
+    private lateinit var userViewModel: UserChangeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +31,9 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         //userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-        userViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[UserViewModel::class.java]
+        userViewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[UserChangeViewModel::class.java]
 
         binding.etPW.transformationMethod=PasswordTransformationMethod.getInstance()
 
@@ -70,6 +76,11 @@ class LoginActivity : AppCompatActivity() {
                         Log.e("TEST LOGIN", response.toString())
 
                         if(response.code == "0000"){
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                DataStoreApplication.getInstance().getDataStore().setText(response.token)
+                            }
+
 
                             val intent = Intent(this, MainActivity::class.java)
                             intent.putExtra("id", id)

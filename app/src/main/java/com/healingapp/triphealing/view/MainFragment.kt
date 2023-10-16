@@ -49,7 +49,7 @@ class MainFragment : Fragment() {
 
         val id = (activity as MainActivity).id
         val pw = (activity as MainActivity).pw
-        val token = (activity as MainActivity).token
+        //val token = (activity as MainActivity).token
 
         /// 추후에 수정해야 하는 부분
         val recRvitemList = ArrayList<ItemRecRV>()
@@ -110,7 +110,7 @@ class MainFragment : Fragment() {
             val intent = Intent(context, ProfileActivity::class.java)
             intent.putExtra("id",id)
             intent.putExtra("pw",pw)
-            intent.putExtra("token",token)
+            //intent.putExtra("token",token)
             startActivity(intent)
         }
 

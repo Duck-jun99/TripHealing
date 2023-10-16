@@ -15,7 +15,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
 
-class UserRepository {
+class UserChangeRepository {
 
     companion object {
         private const val TAG = "UserRepository"
@@ -23,7 +23,7 @@ class UserRepository {
 
     }
 
-    private lateinit var userInterface: UserInterface
+    private lateinit var userInterface: UserChangeInterface
     private var userMutableLiveData: MutableLiveData<NetworkUserResponse> = MutableLiveData()
     private var isInitialized = false
 
@@ -46,20 +46,20 @@ class UserRepository {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 //.addConverterFactory(ScalarsConverterFactory.create())
                 .build()
-                .create(UserInterface::class.java)
+                .create(UserChangeInterface::class.java)
 
             isInitialized = true // 초기화가 완료되면 플래그를 설정합니다.
 
     }
 
-    fun getNetwork(token:String) {
+    fun getNetwork(username: String, password: String) {
 
         if (!isInitialized) {
             // 초기화가 완료되지 않았다면 대기합니다.
             return
         }
 
-        userInterface.getNetwork(token).enqueue(object : Callback<NetworkUserResponse> {
+        userInterface.getNetwork(username, password).enqueue(object : Callback<NetworkUserResponse> {
             override fun onResponse(call: Call<NetworkUserResponse>, response: Response<NetworkUserResponse>) {
                 //Log.d(TAG, "onResponse: ${GsonBuilder().setPrettyPrinting().create().toJson(response.body())}")
                 userMutableLiveData.postValue(response.body())

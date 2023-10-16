@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.healingapp.triphealing.DataStoreApplication
 import com.healingapp.triphealing.ProfileActivity
 import com.healingapp.triphealing.databinding.FragmentUpdateBinding
 import com.healingapp.triphealing.model.update.NetworkUpdateResponse
 import com.healingapp.triphealing.network.update.UpdateInterface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,7 +44,7 @@ class UpdateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val token = (activity as ProfileActivity).token
+        //val token = (activity as ProfileActivity).token
 
         val data_list = mutableListOf<String>()
 
@@ -141,6 +143,7 @@ class UpdateFragment : Fragment() {
             Log.e("Propensity", propensity)
 
             scope.launch {
+                val token = DataStoreApplication.getInstance().getDataStore().text.first()
                 updateInterface.getNetwork(nickname = nickname,
                     useremail = email,
                     introduce_text = introduce,
