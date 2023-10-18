@@ -1,6 +1,5 @@
 package com.healingapp.triphealing
 
-import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
@@ -11,12 +10,10 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.healingapp.triphealing.databinding.ActivityLoginBinding
-import com.healingapp.triphealing.view.MainFragment
+import com.healingapp.triphealing.datastore.DataStoreApplication
 import com.healingapp.triphealing.viewmodel.user.UserChangeViewModel
-import com.healingapp.triphealing.viewmodel.user.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -50,8 +47,6 @@ class LoginActivity : AppCompatActivity() {
             var id:String = binding.etID.text.toString()
             var pw:String = binding.etPW.text.toString()
 
-            Log.e("입력한 ID", id.toString())
-            Log.e("입력한 PW", pw.toString())
 
             //조건식 수정 필요
             if(binding.etID == null || binding.etID.equals("") || binding.etID.length() == 0
@@ -83,9 +78,7 @@ class LoginActivity : AppCompatActivity() {
 
 
                             val intent = Intent(this, MainActivity::class.java)
-                            intent.putExtra("id", id)
-                            intent.putExtra("pw", pw)
-                            intent.putExtra("token", response.token)
+
                             startActivity(intent)
                             finish()
                         }
@@ -105,7 +98,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.joinbtn.setOnClickListener {
-            binding.framelayoutJoin.isVisible = true
+            //binding.framelayoutJoin.isVisible = true
+            val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
         }
 
     }

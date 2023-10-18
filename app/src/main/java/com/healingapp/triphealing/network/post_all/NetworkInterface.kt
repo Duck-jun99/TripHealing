@@ -1,4 +1,4 @@
-package com.healingapp.triphealing.network.post
+package com.healingapp.triphealing.network.post_all
 
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.post.NetworkResponse

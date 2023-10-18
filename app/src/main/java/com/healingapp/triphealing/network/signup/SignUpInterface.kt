@@ -14,18 +14,25 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface SignUpInterface {
     @FormUrlEncoded
     @JvmSuppressWildcards
     @POST(value = Secret.SIGNUP_VALUE)
-
+    @Headers(
+        "accept: application/json"
+    )
     fun getNetwork(
         @Field("username") username:String,
         @Field("password1") password1:String,
         @Field("password2") password2:String,
         @Field("email") email:String,
+        @Field("nickname") nickname:String,
+        @Field("introduce_text") introduceText:String,
+        @Field("profile_img") profileImg:String,
+        @Field("background_img") backgroudImg:String,
         @Field("propensity") propensity:String,
     ):Call<NetworkSignUpResponse>
 

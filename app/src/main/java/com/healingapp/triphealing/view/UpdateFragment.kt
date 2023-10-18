@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.healingapp.triphealing.DataStoreApplication
-import com.healingapp.triphealing.ProfileActivity
+import com.healingapp.triphealing.datastore.DataStoreApplication
 import com.healingapp.triphealing.databinding.FragmentUpdateBinding
 import com.healingapp.triphealing.model.update.NetworkUpdateResponse
+import com.healingapp.triphealing.model.user.NetworkUserResponse
 import com.healingapp.triphealing.network.update.UpdateInterface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +44,6 @@ class UpdateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //val token = (activity as ProfileActivity).token
 
         val data_list = mutableListOf<String>()
 
@@ -132,6 +131,8 @@ class UpdateFragment : Fragment() {
             val profileImg = binding.etProfileImg.text.toString()
             val backgroundImg = binding.etBackgroundImg.text.toString()
             val mbti = binding.etMBTI.text.toString()
+
+            //propensity부분 변경 필요
             val propensity =
                 "{\"mbti\":\"${mbti}\"," +
                         "\"option1\":\"${data_list[0]}\"," +

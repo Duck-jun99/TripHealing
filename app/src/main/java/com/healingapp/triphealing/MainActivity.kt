@@ -1,22 +1,21 @@
 package com.healingapp.triphealing
 
-import android.content.Context
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
+import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import coil.load
-import coil.transform.CircleCropTransformation
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.healingapp.triphealing.databinding.ActivityMainBinding
-import com.healingapp.triphealing.view.MainFragment
-import com.healingapp.triphealing.viewmodel.post.NetworkViewModel
+import com.healingapp.triphealing.datastore.DataStoreApplication
+import com.healingapp.triphealing.viewmodel.post_all.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +24,8 @@ import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var splashScreen: SplashScreen
 
     private lateinit var binding: ActivityMainBinding
     //lateinit var navController: NavController
@@ -39,6 +40,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // setContentView하기 전에 installSplashScreen() 필수
+        splashScreen = installSplashScreen()
+        startSplash()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -60,7 +64,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         viewModelPost = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[NetworkViewModel::class.java]
         viewModelUser = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[UserViewModel::class.java]
 
@@ -77,5 +80,22 @@ class MainActivity : AppCompatActivity() {
 
         binding.navBar.setupWithNavController(navController)
 
+    }
+
+    // splash의 애니메이션 설정
+    private fun startSplash() {
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 5f, 1f)
+            val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 5f, 1f)
+
+            ObjectAnimator.ofPropertyValuesHolder(splashScreenView.iconView, scaleX, scaleY).run {
+                interpolator = AnticipateInterpolator()
+                duration = 1000L
+                doOnEnd {
+                    splashScreenView.remove()
+                }
+                start()
+            }
+        }
     }
 }

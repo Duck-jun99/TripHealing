@@ -9,14 +9,12 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.databinding.FragmentProfileBinding
 import com.healingapp.triphealing.secret.Secret
-import com.healingapp.triphealing.viewmodel.post.NetworkViewModel
+import com.healingapp.triphealing.viewmodel.post_all.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
-import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -60,13 +58,15 @@ class ProfileFragment : Fragment() {
 
 
                     Glide.with(this)
-                        .load(Secret.MEDIA_URL+response.userInfo.profileImg)
+                        .load(Secret.USER_MEDIA_URL+response.userInfo.profileImg)
                         .error(R.drawable.group_24)
                         .circleCrop()
                         .into(binding.imgProfile)
 
                     Glide.with(this)
-                        .load(Secret.MEDIA_URL+response.userInfo.backgroundImg)
+                        .load(Secret.USER_MEDIA_URL+response.userInfo.backgroundImg)
+                        .centerCrop() // 이미지를 가득 채우기 위해 잘라내기
+                        //.placeholder(ColorDrawable(Color.BLACK))
                         .error(R.drawable.background2)
                         .into(binding.imgProfileBack)
 

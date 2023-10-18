@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
-import com.healingapp.triphealing.network.post.ItemRecRV
+import com.healingapp.triphealing.network.post_all.ItemRecRV
 import com.healingapp.triphealing.secret.Secret
 
 class FamRvAdapter(val itemList: ArrayList<ItemRecRV>) :
@@ -24,13 +24,27 @@ class FamRvAdapter(val itemList: ArrayList<ItemRecRV>) :
         holder.tv_author.text = itemList[position].author
         Glide.with(holder.img.context)
             .load(
-            Secret.MEDIA_URL+itemList[position].image)
+            Secret.MEDIA_URL+itemList[position].coverImage)
             .into(holder.img)
+
+        holder.itemView.setOnClickListener {
+            itemClickListener.onClick(it, position)
+        }
     }
 
     override fun getItemCount(): Int {
         return itemList.count()
     }
+
+    interface OnItemClickListener {
+        fun onClick(v: View, position: Int)
+    }
+
+    fun setItemClickListener(onItemClickListener: OnItemClickListener) {
+        this.itemClickListener = onItemClickListener
+    }
+
+    private lateinit var itemClickListener : OnItemClickListener
 
 
     inner class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

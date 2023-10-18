@@ -1,29 +1,19 @@
 package com.healingapp.triphealing
 
-import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.service.voice.VoiceInteractionSession.ActivityId
 import android.util.Log
-import androidx.activity.viewModels
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.healingapp.triphealing.databinding.ActivityProfileBinding
+import com.healingapp.triphealing.datastore.DataStoreApplication
 import com.healingapp.triphealing.view.ProfileFragment
 import com.healingapp.triphealing.view.UpdateFragment
-import com.healingapp.triphealing.viewmodel.post.NetworkViewModel
+import com.healingapp.triphealing.viewmodel.post_all.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-
 
 
 class ProfileActivity : AppCompatActivity() {

@@ -1,6 +1,8 @@
 package com.healingapp.triphealing.view
 
+import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,19 +13,24 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.healingapp.triphealing.PostActivity
+import com.healingapp.triphealing.WriteActivity
 import com.healingapp.triphealing.adapter.FamRvAdapter
 import com.healingapp.triphealing.adapter.LatestRvAdapter
-import com.healingapp.triphealing.MainActivity
 import com.healingapp.triphealing.ProfileActivity
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.adapter.RecRVAdapter
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.databinding.FragmentMainBinding
-import com.healingapp.triphealing.network.post.ItemRecRV
-import com.healingapp.triphealing.viewmodel.post.NetworkViewModel
+import com.healingapp.triphealing.network.post_all.ItemRecRV
+import com.healingapp.triphealing.viewmodel.post_all.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
@@ -31,6 +38,9 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModelPost: NetworkViewModel
     private lateinit var viewModelUser: UserViewModel
+
+    // Fab 버튼 default는 닫히게 설정
+    private var isFabOpen = false
 
 
     override fun onCreateView(
@@ -47,9 +57,8 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val id = (activity as MainActivity).id
-        val pw = (activity as MainActivity).pw
-        //val token = (activity as MainActivity).token
+        //플로팅버튼 이벤트 구현
+        setFABClickEvent()
 
         /// 추후에 수정해야 하는 부분
         val recRvitemList = ArrayList<ItemRecRV>()
@@ -65,30 +74,11 @@ class MainFragment : Fragment() {
         viewModelUser = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
 
-        viewModelPost.getNetworkResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
-            if (response != null) {
-                //Log.e("TEST",GsonBuilder().setPrettyPrinting().create().toJson(response))
-                Log.e("Test", response.size.toString())
-                //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
-                for(i:Int in 0 until response.size.toInt()){
-                    recRvitemList.add(ItemRecRV(response[i].fieldList.title, response[i].fieldList.text,response[i].fieldList.image))
-                    famRVitemList.add(ItemRecRV(response[i].fieldList.title, response[i].fieldList.text,response[i].fieldList.image))
-                    latestRvitemList.add(ItemRecRV(response[i].fieldList.title, response[i].fieldList.text,response[i].fieldList.image))
-                    //recRvAdapter.notifyDataSetChanged()
-                    //famRvAdapter.notifyDataSetChanged()
-                    //latestRvAdapter.notifyDataSetChanged()
-                }
-            }
-        })
-
-
-
-
         viewModelUser.getNetworkUserResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
             if (response != null && response.code == "0000"){
                 //Log.e("TEST USER INFO", response.userInfo.toString())
                 Glide.with(this)
-                    .load(Secret.MEDIA_URL+response.userInfo.profileImg)
+                    .load(Secret.USER_MEDIA_URL+response.userInfo.profileImg)
                     .error(R.drawable.group_24)
                     .into(binding.ellipse2)
                 binding.user.text = HtmlCompat.fromHtml("<b>${response.userInfo.nickname}님</b>, 환영해요!<br>오늘은 이 글 어때요?", HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -108,20 +98,8 @@ class MainFragment : Fragment() {
         binding.ellipse2.setOnClickListener {
 
             val intent = Intent(context, ProfileActivity::class.java)
-            intent.putExtra("id",id)
-            intent.putExtra("pw",pw)
-            //intent.putExtra("token",token)
             startActivity(intent)
         }
-
-
-
-        //initListeners()
-
-
-        //val username = arguments?.getString("username")
-
-        //binding.user.text = HtmlCompat.fromHtml("<b>${username}님</b>, 환영해요!<br>오늘은 이 글 어때요?", HtmlCompat.FROM_HTML_MODE_LEGACY)
 
 
         binding.recRvPost.adapter = recRvAdapter
@@ -132,6 +110,42 @@ class MainFragment : Fragment() {
 
         binding.latestRvPost.adapter = latestRvAdapter
         binding.latestRvPost.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+
+
+        viewModelPost.getNetworkResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
+            if (response != null) {
+                //Log.e("TEST",GsonBuilder().setPrettyPrinting().create().toJson(response))
+                Log.e("Test", response.size.toString())
+                //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
+                for(i:Int in 0 until response.size.toInt()){
+
+                    recRvitemList.add(ItemRecRV(response[i].title, response[i].text,response[i].coverImage))
+                    famRVitemList.add(ItemRecRV(response[i].title, response[i].text,response[i].coverImage))
+                    latestRvitemList.add(ItemRecRV(response[i].title, response[i].text,response[i].coverImage))
+                    //recRvAdapter.notifyDataSetChanged()
+                    //famRvAdapter.notifyDataSetChanged()
+                    //latestRvAdapter.notifyDataSetChanged()
+
+
+                    recRvAdapter.setItemClickListener(object: RecRVAdapter.OnItemClickListener{
+                        override fun onClick(v: View, position: Int) {
+
+                            Log.e("TEST ITEM", response[position].toString())
+                            var intent = Intent(context, PostActivity::class.java)
+                            intent.putExtra("id",response[position].id)
+                            startActivity(intent)
+
+                        }
+                    })
+
+
+                }
+            }
+        })
+
+
+        //추천 리사이클러뷰 자동 스크롤
+        startAutoScroll(recRvAdapter, binding.recRvPost)
 
     }
 
@@ -147,5 +161,57 @@ class MainFragment : Fragment() {
         else Toast.makeText(requireActivity(), "Server Error", Toast.LENGTH_SHORT).show()
 
     }
+
+    private fun setFABClickEvent() {
+        // 플로팅 버튼 클릭시 애니메이션 동작 기능
+        binding.fabOption.setOnClickListener {
+            toggleFab()
+        }
+        // 플로팅 버튼 클릭 이벤트 - write
+        binding.fabWrite.setOnClickListener {
+
+            isFabOpen = true
+            toggleFab()
+
+            val intent = Intent(context, WriteActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
+    private fun toggleFab() {
+        // 플로팅 액션 버튼 닫기 - 열려있는 플로팅 버튼 집어넣는 애니메이션
+        if (isFabOpen) {
+            binding.screenFab.setBackgroundColor(Color.argb(0, 0, 0, 0))
+            ObjectAnimator.ofFloat(binding.fabWrite, "translationY", 0f).apply { start() }
+            ObjectAnimator.ofFloat(binding.fabOption, View.ROTATION, 45f, 0f).apply { start() }
+        } else { // 플로팅 액션 버튼 열기 - 닫혀있는 플로팅 버튼 꺼내는 애니메이션
+            binding.screenFab.setBackgroundColor(Color.parseColor("#4D000000"))
+            ObjectAnimator.ofFloat(binding.fabWrite, "translationY", -180f).apply { start() }
+            ObjectAnimator.ofFloat(binding.fabOption, View.ROTATION, 0f, 45f).apply { start() }
+        }
+
+        isFabOpen = !isFabOpen
+
+    }
+
+    private fun startAutoScroll(adapter:RecRVAdapter, recyclerView:RecyclerView) {
+        var scrollPosition = 0
+        val scrollDelay: Long = 3000 // 3초
+        lifecycleScope.launch {
+            while (true) {
+                if (scrollPosition < adapter.itemCount) {
+                    recyclerView.smoothScrollToPosition(scrollPosition)
+                    scrollPosition++
+                } else {
+                    scrollPosition = 0
+                }
+
+                // 지정된 시간(3초) 대기
+                delay(scrollDelay)
+            }
+        }
+    }
+
+
 
 }

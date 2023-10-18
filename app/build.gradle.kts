@@ -71,4 +71,15 @@ dependencies {
     // DataStore
     //implementation ("androidx.datastore:datastore-preferences-core:1.0.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    //Splash Screen
+    implementation("androidx.core:core-splashscreen:1.0.0-rc01")
+
+    implementation ("androidx.fragment:fragment-ktx:1.6.1")
+
+    //Picasso - image library
+    implementation ("com.squareup.picasso:picasso:2.71828")
+
+    //swiperefreshlayout -> slide refresh layout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

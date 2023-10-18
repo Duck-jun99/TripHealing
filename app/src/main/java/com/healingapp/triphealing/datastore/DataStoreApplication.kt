@@ -1,4 +1,4 @@
-package com.healingapp.triphealing
+package com.healingapp.triphealing.datastore
 
 import android.app.Application
 

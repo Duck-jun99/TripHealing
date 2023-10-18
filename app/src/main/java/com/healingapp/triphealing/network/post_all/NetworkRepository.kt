@@ -1,4 +1,4 @@
-package com.healingapp.triphealing.network.post
+package com.healingapp.triphealing.network.post_all
 
 import android.util.Log
 import androidx.lifecycle.LiveData
