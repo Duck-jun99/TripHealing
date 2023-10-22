@@ -95,6 +95,33 @@ data class GetData(
     @Expose
     @SerializedName(value = "description")
     val description: String,
+
+    @Expose
+    @SerializedName(value = "views")
+    val views: String,
+
+    @Expose
+    @SerializedName(value = "comment")
+    val comment: List<Comment>,
+)
+
+data class Comment(
+    @Expose
+    @SerializedName(value = "post")
+    val post: String,
+
+    @Expose
+    @SerializedName(value = "writer")
+    val writer: String,
+
+    @Expose
+    @SerializedName(value = "body")
+    val body: String,
+
+    @Expose
+    @SerializedName(value = "date")
+    val date: String,
+
 )
 
 data class GetData(

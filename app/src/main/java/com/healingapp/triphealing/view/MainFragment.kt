@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -26,7 +27,8 @@ import com.healingapp.triphealing.R
 import com.healingapp.triphealing.adapter.RecRVAdapter
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.databinding.FragmentMainBinding
-import com.healingapp.triphealing.network.post_all.ItemRecRV
+import com.healingapp.triphealing.network.post.ItemFamRV
+import com.healingapp.triphealing.network.post.ItemRecRV
 import com.healingapp.triphealing.viewmodel.post_all.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
 import kotlinx.coroutines.delay
@@ -64,7 +66,7 @@ class MainFragment : Fragment() {
         val recRvitemList = ArrayList<ItemRecRV>()
         val recRvAdapter = RecRVAdapter(recRvitemList)
 
-        val famRVitemList = ArrayList<ItemRecRV>()
+        val famRVitemList = ArrayList<ItemFamRV>()
         val famRvAdapter = FamRvAdapter(famRVitemList)
 
         val latestRvitemList = ArrayList<ItemRecRV>()
@@ -106,26 +108,188 @@ class MainFragment : Fragment() {
         binding.recRvPost.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
 
         binding.recFamRvPost.adapter = famRvAdapter
-        binding.recFamRvPost.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+        binding.recFamRvPost.layoutManager = GridLayoutManager(requireActivity(),4, GridLayoutManager.HORIZONTAL, false)
 
         binding.latestRvPost.adapter = latestRvAdapter
-        binding.latestRvPost.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+        binding.latestRvPost.layoutManager = GridLayoutManager(requireActivity(), 4, GridLayoutManager.HORIZONTAL, false)
 
 
         viewModelPost.getNetworkResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
+            if (response != null) {
+
+                Log.e("Test", response.size.toString())
+                //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
+                for(i:Int in 0 until response.size.toInt()){
+
+                    latestRvitemList.add(ItemRecRV(response[i].title, response[i].nickname,response[i].coverImage))
+
+                }
+
+                latestRvAdapter.setItemClickListener(object: LatestRvAdapter.OnItemClickListener{
+                    override fun onClick(v: View, position: Int) {
+
+                        Log.e("TEST ITEM", response[position].toString())
+                        var intent = Intent(context, PostActivity::class.java)
+                        intent.putExtra("id",response[position].id)
+                        startActivity(intent)
+
+                    }
+                })
+
+            }
+        })
+
+        viewModelPost.getPostFamousLiveData().observe(viewLifecycleOwner, Observer { response ->
             if (response != null) {
                 //Log.e("TEST",GsonBuilder().setPrettyPrinting().create().toJson(response))
                 Log.e("Test", response.size.toString())
                 //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
                 for(i:Int in 0 until response.size.toInt()){
+                    famRVitemList.add(ItemFamRV(response[i].title, response[i].nickname,response[i].coverImage,response[i].views))
+                }
 
-                    recRvitemList.add(ItemRecRV(response[i].title, response[i].text,response[i].coverImage))
-                    famRVitemList.add(ItemRecRV(response[i].title, response[i].text,response[i].coverImage))
-                    latestRvitemList.add(ItemRecRV(response[i].title, response[i].text,response[i].coverImage))
-                    //recRvAdapter.notifyDataSetChanged()
-                    //famRvAdapter.notifyDataSetChanged()
-                    //latestRvAdapter.notifyDataSetChanged()
+                famRvAdapter.setItemClickListener(object: FamRvAdapter.OnItemClickListener{
+                    override fun onClick(v: View, position: Int) {
 
+                        Log.e("TEST ITEM", response[position].toString())
+                        var intent = Intent(context, PostActivity::class.java)
+                        intent.putExtra("id",response[position].id)
+                        startActivity(intent)
+
+                    }
+                })
+
+            }
+
+        })
+
+        viewModelPost.getPostRecLiveData().observe(viewLifecycleOwner, Observer { response ->
+            if (response != null) {
+
+                //Log.e("TEST",GsonBuilder().setPrettyPrinting().create().toJson(response))
+                Log.e("Test", response.size.toString())
+                //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
+                for(i:Int in 0 until response.size.toInt()){
+                    recRvitemList.add(ItemRecRV(response[i].title, response[i].nickname,response[i].coverImage))
+                }
+
+                recRvAdapter.setItemClickListener(object: RecRVAdapter.OnItemClickListener{
+                    override fun onClick(v: View, position: Int) {
+
+                        Log.e("TEST ITEM", response[position].toString())
+                        var intent = Intent(context, PostActivity::class.java)
+                        intent.putExtra("id",response[position].id)
+                        startActivity(intent)
+
+                    }
+                })
+            }
+
+        })
+
+
+
+        //수정 필요
+        binding.layoutRefresh.setOnRefreshListener {
+
+            viewModelPost = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))[NetworkViewModel::class.java]
+            viewModelUser = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))[UserViewModel::class.java]
+
+            initListeners()
+
+            latestRvitemList.clear()
+            famRVitemList.clear()
+            recRvitemList.clear()
+
+
+            binding.recRvPost.adapter = recRvAdapter
+            binding.recRvPost.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
+
+            binding.recFamRvPost.adapter = famRvAdapter
+            binding.recFamRvPost.layoutManager = GridLayoutManager(requireActivity(),4, GridLayoutManager.HORIZONTAL, false)
+
+            binding.latestRvPost.adapter = latestRvAdapter
+            binding.latestRvPost.layoutManager = GridLayoutManager(requireActivity(), 4, GridLayoutManager.HORIZONTAL, false)
+
+
+            viewModelUser.getNetworkUserResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
+                if (response != null && response.code == "0000"){
+                    //Log.e("TEST USER INFO", response.userInfo.toString())
+                    Glide.with(this)
+                        .load(Secret.USER_MEDIA_URL+response.userInfo.profileImg)
+                        .error(R.drawable.group_24)
+                        .into(binding.ellipse2)
+                    binding.user.text = HtmlCompat.fromHtml("<b>${response.userInfo.nickname}님</b>, 환영해요!<br>오늘은 이 글 어때요?", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                }
+                else{
+                    Glide.with(this)
+                        .load(R.drawable.group_24)
+                        .error(R.drawable.group_24)
+                        .into(binding.ellipse2)
+
+                    binding.user.text = HtmlCompat.fromHtml("<b>GUEST님</b>, <br>로그인하시면 더 많은 정보를 볼 수 있어요!", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                }
+
+            })
+
+            viewModelPost.getNetworkResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
+                if (response != null) {
+
+                    Log.e("Test", response.size.toString())
+                    //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
+                    for(i:Int in 0 until response.size.toInt()){
+
+                        latestRvitemList.add(ItemRecRV(response[i].title, response[i].nickname,response[i].coverImage))
+
+                    }
+
+                    latestRvAdapter.setItemClickListener(object: LatestRvAdapter.OnItemClickListener{
+                        override fun onClick(v: View, position: Int) {
+
+                            Log.e("TEST ITEM", response[position].toString())
+                            var intent = Intent(context, PostActivity::class.java)
+                            intent.putExtra("id",response[position].id)
+                            startActivity(intent)
+
+                        }
+                    })
+
+                }
+            })
+
+            viewModelPost.getPostFamousLiveData().observe(viewLifecycleOwner, Observer { response ->
+                if (response != null) {
+                    //Log.e("TEST",GsonBuilder().setPrettyPrinting().create().toJson(response))
+                    Log.e("Test", response.size.toString())
+                    //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
+                    for(i:Int in 0 until response.size.toInt()){
+                        famRVitemList.add(ItemFamRV(response[i].title, response[i].nickname,response[i].coverImage,response[i].views))
+                    }
+
+                    famRvAdapter.setItemClickListener(object: FamRvAdapter.OnItemClickListener{
+                        override fun onClick(v: View, position: Int) {
+
+                            Log.e("TEST ITEM", response[position].toString())
+                            var intent = Intent(context, PostActivity::class.java)
+                            intent.putExtra("id",response[position].id)
+                            startActivity(intent)
+
+                        }
+                    })
+
+                }
+
+            })
+
+            viewModelPost.getPostRecLiveData().observe(viewLifecycleOwner, Observer { response ->
+                if (response != null) {
+
+                    //Log.e("TEST",GsonBuilder().setPrettyPrinting().create().toJson(response))
+                    Log.e("Test", response.size.toString())
+                    //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
+                    for(i:Int in 0 until response.size.toInt()){
+                        recRvitemList.add(ItemRecRV(response[i].title, response[i].nickname,response[i].coverImage))
+                    }
 
                     recRvAdapter.setItemClickListener(object: RecRVAdapter.OnItemClickListener{
                         override fun onClick(v: View, position: Int) {
@@ -137,12 +301,15 @@ class MainFragment : Fragment() {
 
                         }
                     })
-
-
                 }
-            }
-        })
 
+            })
+
+
+
+
+            binding.layoutRefresh.isRefreshing = false
+        }
 
         //추천 리사이클러뷰 자동 스크롤
         startAutoScroll(recRvAdapter, binding.recRvPost)
@@ -211,7 +378,6 @@ class MainFragment : Fragment() {
             }
         }
     }
-
 
 
 }

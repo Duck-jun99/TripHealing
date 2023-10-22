@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var id:String
     lateinit var pw:String
-    //lateinit var token:String
+    lateinit var token:String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,13 +47,17 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModelPost = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[NetworkViewModel::class.java]
+        viewModelUser = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[UserViewModel::class.java]
+
+
 
         id = intent.getStringExtra("id").toString() // LoginActivity에서 전달된 데이터 읽기
         pw = intent.getStringExtra("pw").toString()
         //token = intent.getStringExtra("token").toString()
 
         CoroutineScope(Dispatchers.Main).launch {
-            val token = DataStoreApplication.getInstance().getDataStore().text.first()
+            token = DataStoreApplication.getInstance().getDataStore().text.first()
             if (::viewModelUser.isInitialized){
                 if (id != null && pw != null) {
                     viewModelUser.getNetwork(token)
@@ -64,8 +68,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewModelPost = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[NetworkViewModel::class.java]
-        viewModelUser = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[UserViewModel::class.java]
 
         if (::viewModelPost.isInitialized){
             viewModelPost.getNetwork()
@@ -98,4 +100,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun initPostListeners() {
+        if (::viewModelPost.isInitialized){
+            viewModelPost.getNetwork()
+        }
+        else Toast.makeText(this, "Server Error", Toast.LENGTH_SHORT).show()
+    }
+
+
+
+    fun initUserListeners(token: String){
+        if (::viewModelUser.isInitialized){
+            viewModelUser.getNetwork(token)
+        }
+        else Toast.makeText(this, "Server Error", Toast.LENGTH_SHORT).show()
+
+    }
+
 }

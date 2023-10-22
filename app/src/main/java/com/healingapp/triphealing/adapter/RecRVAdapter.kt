@@ -5,10 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
-import com.healingapp.triphealing.network.post_all.ItemRecRV
+import com.healingapp.triphealing.network.post.ItemRecRV
 import com.healingapp.triphealing.secret.Secret
 
 class RecRVAdapter(val itemList: ArrayList<ItemRecRV>) :
@@ -21,11 +22,14 @@ class RecRVAdapter(val itemList: ArrayList<ItemRecRV>) :
 
     override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
         holder.tv_title.text = itemList[position].title
-        holder.tv_author.text = itemList[position].author
+        //holder.tv_author.text = itemList[position].author
+        holder.tv_author.text = HtmlCompat.fromHtml("<b><i><font color=\"#808080\">by&nbsp;</font></i></b>${itemList[position].author}", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
         Glide.with(holder.img.context)
             .load(
                 Secret.MEDIA_URL+itemList[position].coverImage)
             .into(holder.img)
+        holder.img.clipToOutline = true
 
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)

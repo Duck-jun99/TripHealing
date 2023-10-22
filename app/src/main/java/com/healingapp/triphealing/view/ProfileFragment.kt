@@ -74,18 +74,13 @@ class ProfileFragment : Fragment() {
                     binding.tvIntroduce.text = response.userInfo.introduceText
 
                     //여행성향 예시
-                    binding.tvPropensity.text = response.userInfo.propensity.option1
+                    binding.tvPropensity.text = "${response.userInfo.propensity.mbti} "+
+                        "${response.userInfo.propensity.option1} " +
+                            " ${response.userInfo.propensity.option2} " +
+                            "${response.userInfo.propensity.option3} " +
+                            "${response.userInfo.propensity.option4}"
 
-                    val data_list = ArrayList<String>()
-                    data_list.add(response.userInfo.propensity.option1)
-                    data_list.add(response.userInfo.propensity.option2)
-                    data_list.add(response.userInfo.propensity.option3)
-                    data_list.add(response.userInfo.propensity.option4)
-                    data_list.add(response.userInfo.propensity.option5)
 
-                    for(i:Int in 0 until data_list.size){
-
-                    }
                 }
 
                 //로그인 되어 있지 않을 때

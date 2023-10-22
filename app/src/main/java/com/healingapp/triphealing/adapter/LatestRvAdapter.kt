@@ -8,14 +8,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
-import com.healingapp.triphealing.network.post_all.ItemRecRV
+import com.healingapp.triphealing.network.post.ItemRecRV
 import com.healingapp.triphealing.secret.Secret
 
 class LatestRvAdapter(val itemList: ArrayList<ItemRecRV>) :
     RecyclerView.Adapter<LatestRvAdapter.BoardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_famrv_post, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_latestrv_post, parent, false)
         return BoardViewHolder(view)
     }
 
@@ -26,6 +26,7 @@ class LatestRvAdapter(val itemList: ArrayList<ItemRecRV>) :
             .load(
                 Secret.MEDIA_URL+itemList[position].coverImage)
             .into(holder.img)
+        holder.img.clipToOutline = true
 
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)

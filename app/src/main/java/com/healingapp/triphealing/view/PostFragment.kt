@@ -1,5 +1,6 @@
 package com.healingapp.triphealing.view
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -21,11 +22,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.toSpannable
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.healingapp.triphealing.PostActivity
+import com.healingapp.triphealing.ProfileActivity
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.databinding.FragmentPostBinding
 import com.healingapp.triphealing.model.post.NetworkResponse
@@ -81,13 +85,18 @@ class PostFragment : Fragment() {
                         response: Response<NetworkResponse>
                     ) {
                         Log.e("TEST ALL", response.body().toString())
+                        Log.e("TEST comment", response.body()?.comment.toString())
 
                         binding.tvPostTitle.text = response.body()?.title
-                        binding.tvPostWriter.text = response.body()?.nickname
+                        binding.tvPostWriter.text =HtmlCompat.fromHtml("<b><i><font color=\"#808080\">by&nbsp;</font></i></b>${response.body()?.nickname}", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
                         //binding.layoutContainer.tvText.text = response.body()?.text
                         binding.layoutContainer.tvNickname.text = response.body()?.nickname
                         binding.layoutContainer.tvIntroduce.text = response.body()?.introduceText
                         binding.layoutContainer.tvCreatedDate.text = response.body()?.createdDate
+
+                        //조회수
+                        binding.layoutContainer.tvViews.text = "조회수: ${response.body()?.views}"
 
                         if(response.body()?.description != null){
                             displayHtml(response.body()!!.description, binding.layoutContainer.tvText)
@@ -124,6 +133,22 @@ class PostFragment : Fragment() {
                                 .error(R.drawable.group_24)
                                 .into(binding.imgPost)
                         }
+
+                        if (response.body()?.comment?.isNotEmpty() == true){
+
+                            binding.layoutContainer.countComments.text = "댓글: ${response.body()!!.comment.size}개"
+
+                            binding.layoutContainer.countComments.setOnClickListener {
+                                binding.layoutContainer.layoutCommentsContainer.root.isVisible = true
+                            }
+
+                            //임시
+                            binding.layoutContainer.layoutCommentsContainer.tvNickname.text = response.body()!!.comment[0].writer
+                            binding.layoutContainer.layoutCommentsContainer.tvComments.text = response.body()!!.comment[0].body
+                        }
+                        else{
+                            binding.layoutContainer.countComments.text = "아직 댓글이 없어요."
+                        }
                     }
 
 
@@ -136,6 +161,13 @@ class PostFragment : Fragment() {
         }
 
         binding.imgPost.scaleType = ImageView.ScaleType.CENTER_CROP
+
+        binding.layoutContainer.imgProfile.setOnClickListener {
+            val intent = Intent(requireActivity(), ProfileActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        }
+
 
     }
 

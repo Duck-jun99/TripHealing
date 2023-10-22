@@ -8,10 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
-import com.healingapp.triphealing.network.post_all.ItemRecRV
+import com.healingapp.triphealing.network.post.ItemFamRV
+import com.healingapp.triphealing.network.post.ItemRecRV
 import com.healingapp.triphealing.secret.Secret
 
-class FamRvAdapter(val itemList: ArrayList<ItemRecRV>) :
+class FamRvAdapter(val itemList: ArrayList<ItemFamRV>) :
     RecyclerView.Adapter<FamRvAdapter.BoardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
@@ -22,10 +23,12 @@ class FamRvAdapter(val itemList: ArrayList<ItemRecRV>) :
     override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
         holder.tv_title.text = itemList[position].title
         holder.tv_author.text = itemList[position].author
+        holder.tv_view.text = itemList[position].view
         Glide.with(holder.img.context)
             .load(
             Secret.MEDIA_URL+itemList[position].coverImage)
             .into(holder.img)
+        holder.img.clipToOutline = true
 
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)
@@ -51,6 +54,7 @@ class FamRvAdapter(val itemList: ArrayList<ItemRecRV>) :
         val tv_title = itemView.findViewById<TextView>(R.id.tv_fam_rv_title)
         val tv_author = itemView.findViewById<TextView>(R.id.tv_fam_rv_author)
         val img = itemView.findViewById<ImageView>(R.id.img_fam_rv)
+        val tv_view = itemView.findViewById<TextView>(R.id.tv_fam_rv_view)
 
 
     }

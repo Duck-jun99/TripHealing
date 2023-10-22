@@ -18,6 +18,7 @@ import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.datastore.dataStore
 import androidx.fragment.app.Fragment
@@ -52,6 +53,7 @@ class WriteFragment : Fragment() {
 
     private lateinit var webView: WebView
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -68,13 +70,14 @@ class WriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requestPermission()
+
         //viewModelPost = ViewModelProvider(requireActivity())[NetworkViewModel::class.java]
         //viewModelUser = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
         lateinit var token:String
 
-        var cameraPath = ""
-        var mWebViewImageUpload: ValueCallback<Array<Uri>>? = null
+
 
         webView = binding.webView
         val settings = webView.settings
@@ -91,70 +94,7 @@ class WriteFragment : Fragment() {
                 return true
             }
         }
-        webView.webChromeClient = object : WebChromeClient() {
-            override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri>>?, fileChooserParams: WebChromeClient.FileChooserParams?): Boolean {
-                try{
-                    mWebViewImageUpload = filePathCallback!!
-                    var takePictureIntent : Intent?
-                    takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    if(takePictureIntent.resolveActivity(requireActivity().packageManager) != null){
-                        var photoFile : File?
 
-                        photoFile = createImageFile()
-                        takePictureIntent.putExtra("PhotoPath",cameraPath)
-
-                        if(photoFile != null){
-                            cameraPath = "file:${photoFile.absolutePath}"
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(photoFile))
-                        }
-                        else takePictureIntent = null
-                    }
-                    val contentSelectionIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                    contentSelectionIntent.type = "image/*"
-
-                    var intentArray: Array<Intent?>
-
-                    if(takePictureIntent != null) intentArray = arrayOf(takePictureIntent)
-                    else intentArray = takePictureIntent?.get(0)!!
-
-                    val chooserIntent = Intent(Intent.ACTION_CHOOSER)
-                    chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
-                    chooserIntent.putExtra(Intent.EXTRA_TITLE,"사용할 앱을 선택해주세요.")
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray)
-                    launcher.launch(chooserIntent)
-                }
-                catch (e : Exception){ }
-                return true
-            }
-
-            fun createImageFile(): File? {
-                @SuppressLint("SimpleDateFormat")
-                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-                val imageFileName = "img_" + timeStamp + "_"
-                val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                return File.createTempFile(imageFileName, ".jpg", storageDir)
-            }
-
-            val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val intent = result.data
-                    Log.e("IMAGE DATA",result.toString())
-
-                    if(intent == null){ //바로 사진을 찍어서 올리는 경우
-                        val results = arrayOf(Uri.parse(cameraPath))
-                        mWebViewImageUpload!!.onReceiveValue(results!!)
-                    }
-                    else{ //사진 앱을 통해 사진을 가져온 경우
-                        val results = intent!!.data!!
-                        mWebViewImageUpload!!.onReceiveValue(arrayOf(results!!))
-                    }
-                }
-                else{ //취소 한 경우 초기화
-                    mWebViewImageUpload!!.onReceiveValue(null)
-                    mWebViewImageUpload = null
-                }
-            }
-        }
 
         // CKEditor가 호스팅된 웹 페이지의 URL을 설정.
         webView.loadUrl(Secret.WRITE_URL)
@@ -181,6 +121,18 @@ class WriteFragment : Fragment() {
 
         }
 
+    }
 
+    private fun requestPermission() {
+        val locationResultLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if (!it) {
+                Toast.makeText(context, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
+            }
+        }
+        locationResultLauncher.launch(
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        )
     }
 }

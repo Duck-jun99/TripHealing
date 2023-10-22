@@ -54,6 +54,10 @@ data class UserInfo(
 data class Propensity(
 
     @Expose
+    @SerializedName(value = "mbti")
+    val mbti: String,
+
+    @Expose
     @SerializedName(value = "option1")
     val option1: String,
 
