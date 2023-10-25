@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -73,14 +74,27 @@ class ProfileFragment : Fragment() {
                     binding.tvNickname.text = response.userInfo.nickname
                     binding.tvIntroduce.text = response.userInfo.introduceText
 
+                    //여행성향
+                    binding.tvPropensity.text = HtmlCompat.fromHtml(
+                        "<p><span style=\"background-color:#FFE6E6\"> ${response.userInfo.propensity.mbti} </span> &nbsp;" +
+                                "<span style=\"background-color:#E6E6FA\"> ${response.userInfo.propensity.option1} </span> &nbsp; " +
+                                "<span style=\"background-color:#E1F8FF\"> ${response.userInfo.propensity.option2} </span> &nbsp; " +
+                                "<span style=\"background-color:#FFFFF0\"> ${response.userInfo.propensity.option3} </span> &nbsp; " +
+                                "<span style=\"background-color:#DCFFE4\"> ${response.userInfo.propensity.option4} </span><p>\n"
+                        ,HtmlCompat.FROM_HTML_MODE_LEGACY)
+
                     //여행성향 예시
-                    binding.tvPropensity.text = "${response.userInfo.propensity.mbti} "+
+                    /*
+                    binding.tvPropensity.text =
+                        "${response.userInfo.propensity.mbti} "+
                         "${response.userInfo.propensity.option1} " +
                             " ${response.userInfo.propensity.option2} " +
                             "${response.userInfo.propensity.option3} " +
                             "${response.userInfo.propensity.option4}"
+                    */
+                    //HtmlCompat.fromHtml("<b><i><font color=\"#808080\">by&nbsp;</font></i></b>${response.body()?.nickname}", HtmlCompat.FROM_HTML_MODE_LEGACY)
 
-
+                    //<p><span style="background-color:#FFE6E6"> Git </span>  <span style="background-color:#E6E6FA"> Github </span>  <span style="background-color:#E1F8FF"> AndroidStudio </span>  <span style="background-color:#FFFFF0"> VisualStudioCode </span>  <span style="background-color:#F5F5F5"> PhotoShop </span>  <span style="background-color:#DCFFE4"> Vim </span><p>
                 }
 
                 //로그인 되어 있지 않을 때

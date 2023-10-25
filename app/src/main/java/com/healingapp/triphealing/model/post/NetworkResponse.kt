@@ -122,6 +122,10 @@ data class Comment(
     @SerializedName(value = "date")
     val date: String,
 
+    @Expose
+    @SerializedName(value = "writer_img")
+    val profileImg: String,
+
 )
 
 data class GetData(

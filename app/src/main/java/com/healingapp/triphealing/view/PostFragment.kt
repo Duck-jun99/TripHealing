@@ -1,5 +1,6 @@
 package com.healingapp.triphealing.view
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -19,15 +20,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.text.HtmlCompat
-import androidx.core.text.toSpannable
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.healingapp.triphealing.PostActivity
 import com.healingapp.triphealing.ProfileActivity
 import com.healingapp.triphealing.R
@@ -134,17 +133,26 @@ class PostFragment : Fragment() {
                                 .into(binding.imgPost)
                         }
 
-                        if (response.body()?.comment?.isNotEmpty() == true){
+                        if (response.body()!!.comment.isNotEmpty()){
 
                             binding.layoutContainer.countComments.text = "댓글: ${response.body()!!.comment.size}개"
 
                             binding.layoutContainer.countComments.setOnClickListener {
-                                binding.layoutContainer.layoutCommentsContainer.root.isVisible = true
+                                binding.layoutContainer.layoutCommentsContainer.isVisible = true
                             }
 
-                            //임시
-                            binding.layoutContainer.layoutCommentsContainer.tvNickname.text = response.body()!!.comment[0].writer
-                            binding.layoutContainer.layoutCommentsContainer.tvComments.text = response.body()!!.comment[0].body
+                            for(i in 0 until response.body()!!.comment.size){
+                                val nickName = response.body()!!.comment[i].writer
+                                val comment = response.body()!!.comment[i].body
+                                val date = response.body()!!.comment[i].date
+                                val img = response.body()!!.comment[i].profileImg
+
+                                Log.e("TEST COMMENT DATA", "${nickName}, ${comment}, ${date}, ${img}")
+
+                                //binding.layoutContainer.layoutCommentsContainer.layoutPostChild.addView(createLayout(nickName, comment, date, img))
+                                binding.layoutContainer.layoutCommentsContainer.addView(createLayout(nickName, comment, date, img))
+                            }
+
                         }
                         else{
                             binding.layoutContainer.countComments.text = "아직 댓글이 없어요."
@@ -193,7 +201,29 @@ class PostFragment : Fragment() {
         // to enable image/link clicking
         html_viewer.movementMethod = LinkMovementMethod.getInstance()
 
+    }
 
+    private fun createLayout(nickname:String, comment:String, date:String, img:String) :View{
+
+        val inflater = requireActivity().layoutInflater
+        val layout = inflater.inflate(R.layout.fragment_post3, null) as LinearLayout
+
+        val tvNickName = layout.findViewById<TextView>(R.id.tv_nickname)
+        val tvComment = layout.findViewById<TextView>(R.id.tv_comments)
+        val imgProfile = layout.findViewById<ImageView>(R.id.img_profile)
+        val tvTime = layout.findViewById<TextView>(R.id.tv_time)
+
+        tvNickName.text = nickname
+        tvComment.text = comment
+        tvTime.text = date
+
+        Glide.with(this)
+            .load(Secret.MEDIA_URL+img)
+            .error(R.drawable.group_24)
+            .into(imgProfile)
+
+
+        return layout
     }
 
 }
