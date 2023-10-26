@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.healingapp.triphealing.model.post.NetworkRecWriterResponse
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.post.NetworkResponse
 import kotlinx.coroutines.currentCoroutineContext
@@ -37,6 +38,10 @@ class NetworkRepository {
     private lateinit var postRecInterface: PostRecInterface
     private var postRecMutableLiveData: MutableLiveData<List<NetworkResponse>> = MutableLiveData()
 
+    //post Recommended writer
+    private lateinit var postRecWriterInterface: PostRecWriterInterface
+    private var postRecWriterMutableLiveData: MutableLiveData<List<NetworkRecWriterResponse>> = MutableLiveData()
+
 
     private var isInitialized = false
 
@@ -44,7 +49,7 @@ class NetworkRepository {
         initializeNetworkInterface()
     }
 
-    //initialize post All, post Famous, post Recommendation
+    //initialize post All, post Famous, post Recommendation, post Recommended writer
     private fun initializeNetworkInterface() {
             val interceptor = HttpLoggingInterceptor()
             interceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -81,11 +86,20 @@ class NetworkRepository {
                 .build()
                 .create(PostRecInterface::class.java)
 
+            //post Recommended writer
+            postRecWriterInterface = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                //.addConverterFactory(ScalarsConverterFactory.create())
+                .build()
+                .create(PostRecWriterInterface::class.java)
+
             isInitialized = true // 초기화가 완료되면 플래그를 설정합니다.
 
     }
 
-    //getNetwork post all, post famous, post recommendation
+    //getNetwork post all, post famous, post recommendation, post Recommended writer
     fun getNetwork() {
 
         if (!isInitialized) {
@@ -132,6 +146,19 @@ class NetworkRepository {
         })
 
 
+        postRecWriterInterface.getNetwork().enqueue(object : Callback<List<NetworkRecWriterResponse>?> {
+            override fun onResponse(call: Call<List<NetworkRecWriterResponse>?>, response: Response<List<NetworkRecWriterResponse>?>) {
+                //Log.d(TAG, "onResponse: ${GsonBuilder().setPrettyPrinting().create().toJson(response.body())}")
+                postRecWriterMutableLiveData.postValue(response.body())
+            }
+
+            override fun onFailure(call: Call<List<NetworkRecWriterResponse>?>, t: Throwable) {
+                Log.e(TAG, "onFailure: error. cause: ${t.message}")
+                postRecWriterMutableLiveData.postValue(null)
+            }
+        })
+
+
 
     }
 
@@ -148,5 +175,10 @@ class NetworkRepository {
     //post recommendation
     fun getPostRecLiveData(): LiveData<List<NetworkResponse>> {
         return this.postRecMutableLiveData
+    }
+
+    //post Recommended writer
+    fun getPostRecWriterLiveData(): LiveData<List<NetworkRecWriterResponse>> {
+        return this.postRecWriterMutableLiveData
     }
 }

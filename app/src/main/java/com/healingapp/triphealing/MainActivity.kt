@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.healingapp.triphealing.databinding.ActivityMainBinding
 import com.healingapp.triphealing.datastore.DataStoreApplication
+import com.healingapp.triphealing.view.MainFragment
 import com.healingapp.triphealing.viewmodel.post_all.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -81,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         binding.navBar.setupWithNavController(navController)
+
 
     }
 

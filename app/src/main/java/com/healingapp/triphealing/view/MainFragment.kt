@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,15 +25,25 @@ import com.healingapp.triphealing.adapter.FamRvAdapter
 import com.healingapp.triphealing.adapter.LatestRvAdapter
 import com.healingapp.triphealing.ProfileActivity
 import com.healingapp.triphealing.R
+import com.healingapp.triphealing.adapter.MbtiRvAdapter
 import com.healingapp.triphealing.adapter.RecRVAdapter
+import com.healingapp.triphealing.adapter.RecWriterRvAdapter
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.databinding.FragmentMainBinding
+import com.healingapp.triphealing.model.post.NetworkRecWriterResponse
+import com.healingapp.triphealing.model.post.NetworkResponse
 import com.healingapp.triphealing.network.post.ItemFamRV
+import com.healingapp.triphealing.network.post.ItemMbtiRV
 import com.healingapp.triphealing.network.post.ItemRecRV
+import com.healingapp.triphealing.network.post_detail.PostDetailInterface
+import com.healingapp.triphealing.network.post_mbti.PostMBTIInterface
 import com.healingapp.triphealing.viewmodel.post_all.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
@@ -43,6 +54,9 @@ class MainFragment : Fragment() {
 
     // Fab 버튼 default는 닫히게 설정
     private var isFabOpen = false
+
+    //사용자와 MBTI가 같은 유저의 게시물 interface
+    val postMBTIInterface by lazy { PostMBTIInterface.create() }
 
 
     override fun onCreateView(
@@ -72,6 +86,13 @@ class MainFragment : Fragment() {
         val latestRvitemList = ArrayList<ItemRecRV>()
         val latestRvAdapter = LatestRvAdapter(latestRvitemList)
 
+        val recWriterRvitemList = ArrayList<ItemFamRV>()
+        val recWriterRvAdapter = RecWriterRvAdapter(recWriterRvitemList)
+
+        val mbtiRvitemList = ArrayList<ItemMbtiRV>()
+        val mbtiRvAdapter = MbtiRvAdapter(mbtiRvitemList)
+
+
         viewModelPost = ViewModelProvider(requireActivity())[NetworkViewModel::class.java]
         viewModelUser = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
@@ -79,11 +100,47 @@ class MainFragment : Fragment() {
         viewModelUser.getNetworkUserResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
             if (response != null && response.code == "0000"){
                 //Log.e("TEST USER INFO", response.userInfo.toString())
+
                 Glide.with(this)
                     .load(Secret.USER_MEDIA_URL+response.userInfo.profileImg)
                     .error(R.drawable.group_24)
                     .into(binding.ellipse2)
                 binding.user.text = HtmlCompat.fromHtml("<b>${response.userInfo.nickname}님</b>, 환영해요!<br>오늘은 이 글 어때요?", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+                binding.layoutMain3.tvMbti.text = HtmlCompat.fromHtml("<b>${response.userInfo.propensity.mbti}<b>인 다른 유저 글은 어때요?", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                //로그인 시, 유저의 mbti와 맞는 다른 유저의 게시물 보여줌.
+                postMBTIInterface.getNetwork(response.userInfo.propensity.mbti)
+                    .enqueue(object : Callback<List<NetworkRecWriterResponse>> {
+                        //서버 요청 성공
+                        override fun onResponse(
+                            call: Call<List<NetworkRecWriterResponse>>,
+                            responseMbti: Response<List<NetworkRecWriterResponse>>
+                        ) {
+                            if(responseMbti.body()!=null){
+                                for(i:Int in 0 until responseMbti.body()!!.size.toInt()){
+                                    mbtiRvitemList.add(ItemMbtiRV(responseMbti.body()!![i].title, responseMbti.body()!![i].nickname,responseMbti.body()!![i].coverImage, responseMbti.body()!![i].text))
+                                }
+                                mbtiRvAdapter.notifyDataSetChanged()
+                                Log.e("MBTILIST",mbtiRvitemList.toString())
+
+                                mbtiRvAdapter.setItemClickListener(object: MbtiRvAdapter.OnItemClickListener{
+                                    override fun onClick(v: View, position: Int) {
+
+                                        var intent = Intent(context, PostActivity::class.java)
+                                        intent.putExtra("id",responseMbti.body()!![position].id)
+                                        startActivity(intent)
+
+                                    }
+                                })
+                            }
+
+                        }
+
+                        override fun onFailure(call: Call<List<NetworkRecWriterResponse>>, t: Throwable) {
+                            Log.e("POST MBTI ERROR", "onFailure: error. cause: ${t.message}")
+
+                        }
+                    })
             }
             else{
                 Glide.with(this)
@@ -112,6 +169,13 @@ class MainFragment : Fragment() {
 
         binding.latestRvPost.adapter = latestRvAdapter
         binding.latestRvPost.layoutManager = GridLayoutManager(requireActivity(), 4, GridLayoutManager.HORIZONTAL, false)
+
+        binding.layoutMain2.rvPickWriter.adapter = recWriterRvAdapter
+        binding.layoutMain2.rvPickWriter.layoutManager = GridLayoutManager(requireActivity(), 4, GridLayoutManager.HORIZONTAL, false)
+
+
+        binding.layoutMain3.rvRecMbtiPost.adapter = mbtiRvAdapter
+        binding.layoutMain3.rvRecMbtiPost.layoutManager = GridLayoutManager(requireActivity(), 1, GridLayoutManager.HORIZONTAL, false)
 
 
         viewModelPost.getNetworkResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
@@ -186,6 +250,42 @@ class MainFragment : Fragment() {
             }
 
         })
+
+        viewModelPost.getPostRecWriterLiveData().observe(viewLifecycleOwner, Observer { response ->
+            if(response != null){
+
+                Glide.with(this)
+                    .load(Secret.MEDIA_URL+response[0].profileImg)
+                    .error(R.drawable.group_24)
+                    .into(binding.layoutMain2.imgPickUser)
+                binding.layoutMain2.tvPickUser.text = response[0].nickname
+                Glide.with(this)
+                    .load(Secret.MEDIA_URL+response[0].coverImage)
+                    .error(R.drawable.background2)
+                    .into(binding.layoutMain2.imgCoverPick)
+                binding.layoutMain2.tvTitleBestView.text = HtmlCompat.fromHtml("<b>${response[0].nickname}님</b>의 이 작품을 추천드려요.", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                binding.layoutMain2.tvTitle.text = response[0].title
+                binding.layoutMain2.tvTitle2.text = response[0].title
+                binding.layoutMain2.tvAnotherPost.text = HtmlCompat.fromHtml("<b>${response[0].nickname}님</b>의 다른 글", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+
+                for(i:Int in 0 until response.size.toInt()){
+                    recWriterRvitemList.add(ItemFamRV(response[i].title, response[i].nickname,response[i].coverImage,response[i].views))
+                }
+
+                recWriterRvAdapter.setItemClickListener(object: RecWriterRvAdapter.OnItemClickListener{
+                    override fun onClick(v: View, position: Int) {
+
+                        Log.e("TEST ITEM", response[position].toString())
+                        var intent = Intent(context, PostActivity::class.java)
+                        intent.putExtra("id",response[position].id)
+                        startActivity(intent)
+
+                    }
+                })
+            }
+        })
+
 
 
 

@@ -64,6 +64,9 @@ class SettingFragment : Fragment() {
             }
 
             else{
+                binding.tvNickname.text = "GUEST"
+                binding.tvIntroduce.text = "로그인이 필요합니다."
+
                 Glide.with(this)
                     .load(R.drawable.group_24)
                     .error(R.drawable.group_24)

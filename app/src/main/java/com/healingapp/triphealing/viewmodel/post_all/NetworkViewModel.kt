@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.healingapp.triphealing.model.post.NetworkRecWriterResponse
 import com.healingapp.triphealing.model.post.NetworkResponse
 import com.healingapp.triphealing.network.post.NetworkRepository
-import com.healingapp.triphealing.network.post.PostRecInterface
 import kotlinx.coroutines.launch
 
 class NetworkViewModel(application: Application) : AndroidViewModel(application) {
@@ -21,14 +21,18 @@ class NetworkViewModel(application: Application) : AndroidViewModel(application)
     //post recommendation
     private var PostRecLiveData: LiveData<List<NetworkResponse>>
 
+    //post Recommended writer
+    private var PostRecWriterLiveData: LiveData<List<NetworkRecWriterResponse>>
+
     init {
         NetworkgetRepository = NetworkRepository()
         NetworkResponseLiveData = NetworkgetRepository.getNetworkResponseLiveData()
         PostFamousLiveData = NetworkgetRepository.getPostFamousLiveData()
         PostRecLiveData = NetworkgetRepository.getPostRecLiveData()
+        PostRecWriterLiveData = NetworkgetRepository.getPostRecWriterLiveData()
     }
 
-    //view에서 호출시, post all, post famous, post recommendation 다 호출
+    //view에서 호출시, post all, post famous, post recommendation, post Recommended writer 다 호출
     fun getNetwork() {
         viewModelScope.launch {
             NetworkgetRepository.getNetwork()
@@ -46,5 +50,9 @@ class NetworkViewModel(application: Application) : AndroidViewModel(application)
 
     fun getPostRecLiveData(): LiveData<List<NetworkResponse>> {
         return PostRecLiveData
+    }
+
+    fun getPostRecWriterLiveData(): LiveData<List<NetworkRecWriterResponse>> {
+        return PostRecWriterLiveData
     }
 }
