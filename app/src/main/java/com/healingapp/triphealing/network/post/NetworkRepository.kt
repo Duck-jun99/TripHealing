@@ -1,15 +1,19 @@
 package com.healingapp.triphealing.network.post
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.healingapp.triphealing.MainActivity
 import com.healingapp.triphealing.model.post.NetworkRecWriterResponse
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.post.NetworkResponse
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -103,7 +107,7 @@ class NetworkRepository {
     fun getNetwork() {
 
         if (!isInitialized) {
-            // 초기화가 완료되지 않았다면 대기합니다.
+            // 초기화가 완료되지 않았다면 대기.
             return
         }
 

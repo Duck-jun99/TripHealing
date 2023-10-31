@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" android:minSdkVersion="33"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        android:minSdkVersion="33" />
 
     <uses-permission android:name="android.permission.CAMERA"/>
 
@@ -29,6 +32,15 @@
         android:theme="@style/Theme.TripHealing"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <service
+            android:name=".utils.FCMService"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <activity
             android:name=".PostActivity"
             android:exported="false"
@@ -58,6 +70,7 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true" />
+
     </application>
 
 </manifest>

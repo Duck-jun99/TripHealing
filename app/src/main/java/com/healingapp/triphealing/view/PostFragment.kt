@@ -32,6 +32,7 @@ import com.healingapp.triphealing.ProfileActivity
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.databinding.FragmentPostBinding
 import com.healingapp.triphealing.model.post.NetworkResponse
+import com.healingapp.triphealing.network.post.ItemComment
 import com.healingapp.triphealing.network.post_detail.PostDetailInterface
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.utils.ImageGetter
@@ -54,6 +55,8 @@ class PostFragment : Fragment() {
     private val scope = CoroutineScope(Dispatchers.Default)
 
     val postDetailInterface by lazy { PostDetailInterface.create() }
+
+    private var flag = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -137,21 +140,32 @@ class PostFragment : Fragment() {
 
                             binding.layoutContainer.countComments.text = "댓글: ${response.body()!!.comment.size}개"
 
-                            binding.layoutContainer.countComments.setOnClickListener {
-                                binding.layoutContainer.layoutCommentsContainer.isVisible = true
-                            }
+                            val commentData:ArrayList<ItemComment> = ArrayList()
 
                             for(i in 0 until response.body()!!.comment.size){
-                                val nickName = response.body()!!.comment[i].writer
-                                val comment = response.body()!!.comment[i].body
-                                val date = response.body()!!.comment[i].date
-                                val img = response.body()!!.comment[i].profileImg
 
-                                Log.e("TEST COMMENT DATA", "${nickName}, ${comment}, ${date}, ${img}")
+                                //Log.e("TEST COMMENT DATA", "${nickName}, ${comment}, ${date}, ${img}")
+                                commentData.add(ItemComment(response.body()!!.comment[i].writer,response.body()!!.comment[i].body,response.body()!!.comment[i].date,response.body()!!.comment[i].profileImg))
 
-                                //binding.layoutContainer.layoutCommentsContainer.layoutPostChild.addView(createLayout(nickName, comment, date, img))
-                                binding.layoutContainer.layoutCommentsContainer.addView(createLayout(nickName, comment, date, img))
                             }
+
+                            binding.layoutContainer.countComments.setOnClickListener {
+
+                                if(flag ==0){
+                                    binding.layoutContainer.layoutCommentsContainer.isVisible = true
+                                    binding.layoutContainer.layoutCommentsContainer.addView(createLayout(commentData))
+
+                                    flag += 1
+                                }
+                                else if(flag ==1){
+                                    binding.layoutContainer.layoutCommentsContainer.isVisible = false
+                                    binding.layoutContainer.layoutCommentsContainer.removeView(getView())
+                                    flag -= 1
+                                }
+
+                            }
+
+
 
                         }
                         else{
@@ -203,9 +217,9 @@ class PostFragment : Fragment() {
 
     }
 
-    private fun createLayout(nickname:String, comment:String, date:String, img:String) :View{
+    private fun createLayout(commentData:ArrayList<ItemComment>) :View{
 
-        val inflater = requireActivity().layoutInflater
+        val inflater = this.layoutInflater
         val layout = inflater.inflate(R.layout.fragment_post3, null) as LinearLayout
 
         val tvNickName = layout.findViewById<TextView>(R.id.tv_nickname)
@@ -213,14 +227,18 @@ class PostFragment : Fragment() {
         val imgProfile = layout.findViewById<ImageView>(R.id.img_profile)
         val tvTime = layout.findViewById<TextView>(R.id.tv_time)
 
-        tvNickName.text = nickname
-        tvComment.text = comment
-        tvTime.text = date
+        for(i in 0 until commentData.size){
+            tvNickName.text = commentData[i].nickName
+            tvComment.text = commentData[i].comment
+            tvTime.text = commentData[i].date
 
-        Glide.with(this)
-            .load(Secret.MEDIA_URL+img)
-            .error(R.drawable.group_24)
-            .into(imgProfile)
+            Glide.with(this)
+                .load(Secret.MEDIA_URL+commentData[i].img)
+                .error(R.drawable.group_24)
+                .into(imgProfile)
+        }
+
+
 
 
         return layout

@@ -8,7 +8,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -59,6 +61,8 @@ class MainFragment : Fragment() {
     val postMBTIInterface by lazy { PostMBTIInterface.create() }
 
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -72,6 +76,10 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //SearchAutoComplete (searchView 자동 추천)
+        var searchAutoComplete: SearchView.SearchAutoComplete
+        = binding.searchBar.findViewById(androidx.appcompat.R.id.search_src_text)
 
         //플로팅버튼 이벤트 구현
         setFABClickEvent()
@@ -181,13 +189,18 @@ class MainFragment : Fragment() {
         viewModelPost.getNetworkResponseLiveData().observe(viewLifecycleOwner, Observer { response ->
             if (response != null) {
 
+                var searchDatas: ArrayList<String> = ArrayList()
+
                 Log.e("Test", response.size.toString())
                 //binding.user.text = GsonBuilder().setPrettyPrinting().create().toJson(response)
                 for(i:Int in 0 until response.size.toInt()){
 
                     latestRvitemList.add(ItemRecRV(response[i].title, response[i].nickname,response[i].coverImage))
 
+                    searchDatas.add(response[i].title)
+
                 }
+                latestRvAdapter.notifyDataSetChanged()
 
                 latestRvAdapter.setItemClickListener(object: LatestRvAdapter.OnItemClickListener{
                     override fun onClick(v: View, position: Int) {
@@ -200,6 +213,28 @@ class MainFragment : Fragment() {
                     }
                 })
 
+                binding.searchBar.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        Log.e("SearchView","Text Change")
+
+                        return true
+                    }
+
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+
+
+                        return true
+                    }
+                })
+
+                searchAutoComplete.setAdapter(ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1, searchDatas))
+
+                //항목 선택 이벤트 추가하지 않으면 추천단어 선택시 NPE 발생
+                searchAutoComplete.setOnItemClickListener { adapterView, view, itemIndex, id ->
+                    val query = adapterView.getItemAtPosition(itemIndex) as String
+                    searchAutoComplete.setText("$query")
+                }
+
             }
         })
 
@@ -211,6 +246,7 @@ class MainFragment : Fragment() {
                 for(i:Int in 0 until response.size.toInt()){
                     famRVitemList.add(ItemFamRV(response[i].title, response[i].nickname,response[i].coverImage,response[i].views))
                 }
+                famRvAdapter.notifyDataSetChanged()
 
                 famRvAdapter.setItemClickListener(object: FamRvAdapter.OnItemClickListener{
                     override fun onClick(v: View, position: Int) {
@@ -236,6 +272,7 @@ class MainFragment : Fragment() {
                 for(i:Int in 0 until response.size.toInt()){
                     recRvitemList.add(ItemRecRV(response[i].title, response[i].nickname,response[i].coverImage))
                 }
+                recRvAdapter.notifyDataSetChanged()
 
                 recRvAdapter.setItemClickListener(object: RecRVAdapter.OnItemClickListener{
                     override fun onClick(v: View, position: Int) {
@@ -272,6 +309,7 @@ class MainFragment : Fragment() {
                 for(i:Int in 0 until response.size.toInt()){
                     recWriterRvitemList.add(ItemFamRV(response[i].title, response[i].nickname,response[i].coverImage,response[i].views))
                 }
+                recWriterRvAdapter.notifyDataSetChanged()
 
                 recWriterRvAdapter.setItemClickListener(object: RecWriterRvAdapter.OnItemClickListener{
                     override fun onClick(v: View, position: Int) {
@@ -283,9 +321,9 @@ class MainFragment : Fragment() {
 
                     }
                 })
+
             }
         })
-
 
 
 
@@ -342,6 +380,7 @@ class MainFragment : Fragment() {
                         latestRvitemList.add(ItemRecRV(response[i].title, response[i].nickname,response[i].coverImage))
 
                     }
+                    latestRvAdapter.notifyDataSetChanged()
 
                     latestRvAdapter.setItemClickListener(object: LatestRvAdapter.OnItemClickListener{
                         override fun onClick(v: View, position: Int) {
@@ -365,6 +404,7 @@ class MainFragment : Fragment() {
                     for(i:Int in 0 until response.size.toInt()){
                         famRVitemList.add(ItemFamRV(response[i].title, response[i].nickname,response[i].coverImage,response[i].views))
                     }
+                    famRvAdapter.notifyDataSetChanged()
 
                     famRvAdapter.setItemClickListener(object: FamRvAdapter.OnItemClickListener{
                         override fun onClick(v: View, position: Int) {
@@ -390,6 +430,7 @@ class MainFragment : Fragment() {
                     for(i:Int in 0 until response.size.toInt()){
                         recRvitemList.add(ItemRecRV(response[i].title, response[i].nickname,response[i].coverImage))
                     }
+                    recRvAdapter.notifyDataSetChanged()
 
                     recRvAdapter.setItemClickListener(object: RecRVAdapter.OnItemClickListener{
                         override fun onClick(v: View, position: Int) {
