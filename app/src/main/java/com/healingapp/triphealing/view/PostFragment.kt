@@ -166,23 +166,22 @@ class PostFragment : Fragment() {
 
                                 }
 
-                                binding.layoutContainer.countComments.setOnClickListener {
-                                    val fragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container_view_post)
-                                    if (fragment is PostFragment) {
-
-                                        val fragment_comment = requireActivity().supportFragmentManager.beginTransaction()
-                                        fragment_comment.replace(
-                                            R.id.fragment_container_view_post,
-                                            CommentFragment()
-                                        )
-                                        fragment_comment.commit()
-                                    }
-                                }
-
-
                             }
                             else{
                                 binding.layoutContainer.countComments.text = "아직 댓글이 없어요."
+                            }
+
+                            binding.layoutContainer.countComments.setOnClickListener {
+                                val fragment = requireActivity().supportFragmentManager.findFragmentById(R.id.fragment_container_view_post)
+                                if (fragment is PostFragment) {
+
+                                    val fragment_comment = requireActivity().supportFragmentManager.beginTransaction()
+                                    fragment_comment.replace(
+                                        R.id.fragment_container_view_post,
+                                        CommentFragment()
+                                    )
+                                    fragment_comment.commit()
+                                }
                             }
                         }
 

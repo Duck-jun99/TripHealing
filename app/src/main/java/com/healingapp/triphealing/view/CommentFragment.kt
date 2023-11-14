@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -128,26 +129,30 @@ class CommentFragment:Fragment() {
         }
 
         binding.btnComment.setOnClickListener {
-            body = binding.etComment.text.toString()
-            CoroutineScope(Dispatchers.Default).launch {
-                nickName?.let {
-                    postDetailInterface.postComment(id, nickName = it, body = body!!)
-                        .enqueue(object : Callback<NetworkCommentResponse> {
-                            //서버 요청 성공
-                            override fun onResponse(
-                                call: Call<NetworkCommentResponse>,
-                                response: Response<NetworkCommentResponse>) {
-                                Log.e("CommentFragment", response.body().toString())
-                                binding.layoutComment.addView(profileImg?.let { it1 -> createLayout(writer = response.body()!!.writer, body = response.body()!!.body, date = response.body()!!.date, profileImg = it1) })
-                            }
+            if (binding.etComment.text.toString() != ""){
+                body = binding.etComment.text.toString()
+                CoroutineScope(Dispatchers.Default).launch {
+                    nickName?.let {
+                        postDetailInterface.postComment(id, nickName = it, body = body!!)
+                            .enqueue(object : Callback<NetworkCommentResponse> {
+                                //서버 요청 성공
+                                override fun onResponse(
+                                    call: Call<NetworkCommentResponse>,
+                                    response: Response<NetworkCommentResponse>) {
+                                    Log.e("CommentFragment", response.body().toString())
+                                    binding.layoutComment.addView(profileImg?.let { it1 -> createLayout(writer = response.body()!!.writer, body = response.body()!!.body, date = response.body()!!.date, profileImg = it1) })
+                                }
 
-                            override fun onFailure(call: Call<NetworkCommentResponse>, t: Throwable) {
-                                Log.e("POST DETAIL ERROR", "onFailure: error. cause: ${t.message}")
+                                override fun onFailure(call: Call<NetworkCommentResponse>, t: Throwable) {
+                                    Log.e("POST DETAIL ERROR", "onFailure: error. cause: ${t.message}")
 
-                            }
-                        })
+                                }
+                            })
+                    }
                 }
             }
+            else Toast.makeText(requireContext(),"댓글을 입력해주세요.",Toast.LENGTH_SHORT).show()
+
         }
     }
 

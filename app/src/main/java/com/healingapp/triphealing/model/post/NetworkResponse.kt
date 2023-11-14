@@ -120,11 +120,11 @@ data class NetworkRecWriterResponse(
     @Expose
     @SerializedName(value = "profile_img")
     val profileImg: String,
-
+/*
     @Expose
     @SerializedName(value = "description")
     val description: String,
-
+*/
     @Expose
     @SerializedName(value = "views")
     val views: String,
