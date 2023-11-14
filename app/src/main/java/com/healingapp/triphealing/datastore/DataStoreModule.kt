@@ -16,8 +16,7 @@ class DataStoreModule(private val context : Context) {
     preferencesDataStore(name = "dataStore")
 
     private val tokenKey = stringPreferencesKey("TOKEN_KEY")
-    private val idKey = stringPreferencesKey("ID")
-    private val pwKey = stringPreferencesKey("PW")
+    private val userName = stringPreferencesKey("USERNAME")
     //private val intkey = intPreferencesKey("key_name")
 
     val text : Flow<String> = context.dataStore.data
@@ -32,32 +31,30 @@ class DataStoreModule(private val context : Context) {
             preferences[tokenKey] ?: ""
         }
 
-    suspend fun setText(text : String){
+    suspend fun setToken(text : String){
         context.dataStore.edit { preferences ->
             preferences[tokenKey] = text
         }
     }
 
-    val id: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[idKey] ?: ""
+    val username : Flow<String> = context.dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {preferences ->
+            preferences[userName] ?: ""
         }
 
-    val pw: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[pwKey] ?: ""
-        }
-
-    // 추가: ID와 PW 값을 설정하는 메서드
-    suspend fun setId(id: String) {
+    suspend fun setUser(username : String){
         context.dataStore.edit { preferences ->
-            preferences[idKey] = id
+            preferences[userName] = username
         }
     }
 
-    suspend fun setPw(pw: String) {
-        context.dataStore.edit { preferences ->
-            preferences[pwKey] = pw
-        }
-    }
+
+
 }

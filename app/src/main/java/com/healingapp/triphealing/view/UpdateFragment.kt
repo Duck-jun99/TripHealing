@@ -167,7 +167,7 @@ class UpdateFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<NetworkUpdateResponse>, t: Throwable) {
-                        TODO("Not yet implemented")
+                        //TODO("Not yet implemented")
                     }
                 })
             }

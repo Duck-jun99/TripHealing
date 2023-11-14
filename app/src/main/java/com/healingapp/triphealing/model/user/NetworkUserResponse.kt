@@ -27,6 +27,10 @@ data class NetworkUserResponse(
 data class UserInfo(
 
     @Expose
+    @SerializedName(value = "username")
+    val username: String,
+
+    @Expose
     @SerializedName(value = "useremail")
     val author: String,
 

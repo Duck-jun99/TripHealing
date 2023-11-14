@@ -2,6 +2,8 @@ package com.healingapp.triphealing.network.post_detail
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.healingapp.triphealing.model.post.NetworkCommentResponse
+import com.healingapp.triphealing.model.post.NetworkDeleteResponse
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.post.NetworkResponse
 import okhttp3.OkHttpClient
@@ -21,6 +23,21 @@ interface PostDetailInterface {
     fun getNetwork(
         @Field("id") id:String
     ):Call<NetworkResponse>
+
+    @FormUrlEncoded
+    @POST(value = Secret.POST_DELETE)
+    fun deletePost(
+        @Field("id") id:String,
+        @Field("username") userName:String
+    ):Call<NetworkDeleteResponse>
+
+    @FormUrlEncoded
+    @POST(value = Secret.POST_COMMENT)
+    fun postComment(
+        @Field("id") id:String,
+        @Field("nickname") nickName:String,
+        @Field("body") body:String,
+    ):Call<NetworkCommentResponse>
 
     companion object {
         fun create(): PostDetailInterface {

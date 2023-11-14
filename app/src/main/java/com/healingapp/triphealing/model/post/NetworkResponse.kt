@@ -129,3 +129,36 @@ data class NetworkRecWriterResponse(
     @SerializedName(value = "views")
     val views: String,
 )
+
+data class NetworkDeleteResponse(
+    @Expose
+    @SerializedName(value = "code")
+    val code: String,
+
+    @Expose
+    @SerializedName(value = "msg")
+    val msg: String,
+)
+
+data class NetworkCommentResponse(
+    @Expose
+    @SerializedName(value = "code")
+    val code: String,
+
+    @Expose
+    @SerializedName(value = "msg")
+    val msg: String,
+
+    @Expose
+    @SerializedName(value = "comment.writer")
+    val writer: String,
+
+    @Expose
+    @SerializedName(value = "comment.body")
+    val body: String,
+
+    @Expose
+    @SerializedName(value = "comment.date")
+    val date: String,
+
+)

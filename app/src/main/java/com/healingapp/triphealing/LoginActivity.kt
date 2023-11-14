@@ -35,8 +35,6 @@ class LoginActivity : AppCompatActivity() {
         binding.etPW.transformationMethod=PasswordTransformationMethod.getInstance()
 
 
-        //binding.joinbtn.setOnClickListener { Toast.makeText(this, "구현중", Toast.LENGTH_SHORT).show() }
-
         binding.loginbtn.setOnClickListener {
             binding.loginbtn.isVisible = false
             binding.linearLayout.isVisible = true
@@ -73,7 +71,8 @@ class LoginActivity : AppCompatActivity() {
                         if(response.code == "0000"){
 
                             CoroutineScope(Dispatchers.Main).launch {
-                                DataStoreApplication.getInstance().getDataStore().setText(response.token)
+                                DataStoreApplication.getInstance().getDataStore().setToken(response.token)
+                                DataStoreApplication.getInstance().getDataStore().setUser(response.userInfo.username)
                             }
 
 

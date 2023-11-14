@@ -1,21 +1,35 @@
 package com.healingapp.triphealing.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.healingapp.triphealing.PostActivity
 import com.healingapp.triphealing.R
+import com.healingapp.triphealing.adapter.FamRvAdapter
 import com.healingapp.triphealing.databinding.FragmentProfileBinding
+import com.healingapp.triphealing.model.post.NetworkResponse
+import com.healingapp.triphealing.model.update.NetworkUpdateResponse
+import com.healingapp.triphealing.model.user.NetworkUserResponse
+import com.healingapp.triphealing.network.login.UserPostInterface
+import com.healingapp.triphealing.network.post.ItemFamRV
+import com.healingapp.triphealing.network.update.UpdateInterface
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.viewmodel.post_all.NetworkViewModel
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ProfileFragment : Fragment() {
 
@@ -24,6 +38,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var viewModelPost: NetworkViewModel
     private lateinit var viewModelUser: UserViewModel
+
+    val userPostInterface by lazy { UserPostInterface.create() }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +59,13 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        val recUserPostList = ArrayList<ItemFamRV>()
+        val userRvAdapter = FamRvAdapter(recUserPostList)
+
+        binding.recUser.adapter = userRvAdapter
+        binding.recUser.layoutManager = GridLayoutManager(requireActivity(),4, GridLayoutManager.HORIZONTAL, false)
 
 
         // ProfileActivity에서 설정한 ViewModel 가져오기
@@ -82,6 +105,39 @@ class ProfileFragment : Fragment() {
                                 "<span style=\"background-color:#FFFFF0\"> ${response.userInfo.propensity.option3} </span> &nbsp; " +
                                 "<span style=\"background-color:#DCFFE4\"> ${response.userInfo.propensity.option4} </span><p>\n"
                         ,HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+                    userPostInterface.getNetwork(response.userInfo.username).enqueue(object :
+                        Callback<List<NetworkResponse>> {
+                        //서버 요청 성공
+                        override fun onResponse(
+                            call: Call<List<NetworkResponse>>,
+                            response: Response<List<NetworkResponse>>
+                        ) {
+                            if(response.body() != null){
+                                for(i:Int in 0 until response.body()!!.size.toInt()){
+                                    recUserPostList.add(ItemFamRV(response.body()!![i].title, response.body()!![i].nickname,response.body()!![i].coverImage,response.body()!![i].views))
+                                }
+                                userRvAdapter.notifyDataSetChanged()
+
+                                userRvAdapter.setItemClickListener(object: FamRvAdapter.OnItemClickListener{
+                                    override fun onClick(v: View, position: Int) {
+
+                                        Log.e("TEST ITEM", response.body()!![position].toString())
+                                        var intent = Intent(context, PostActivity::class.java)
+                                        intent.putExtra("id",response.body()!![position].id)
+                                        startActivity(intent)
+
+                                    }
+                                })
+                            }
+
+
+                        }
+
+                        override fun onFailure(call: Call<List<NetworkResponse>>, t: Throwable) {
+                            //TODO("Not yet implemented")
+                        }
+                    })
 
                     //여행성향 예시
                     /*
