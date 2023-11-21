@@ -55,7 +55,7 @@ class NotificationFragment : Fragment() {
             }.await()
 
             if(data != null) {
-                Log.e("NotificationFragment",data.toString())
+                Log.e("NotificationFragment","ROOM DATA: ${data.toString()}")
                 for (i:Int in 0 until data.size.toInt()){
                     notificationList.add(data[i])
                 }

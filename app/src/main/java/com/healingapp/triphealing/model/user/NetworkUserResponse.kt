@@ -95,6 +95,41 @@ data class SignUpData(
     val option5: String,
 )
 
+data class UserInfoResponse(
+
+    @Expose
+    @SerializedName(value = "username")
+    val username: String,
+
+    @Expose
+    @SerializedName(value = "useremail")
+    val author: String,
+
+    @Expose
+    @SerializedName(value = "nickname")
+    val nickname: String,
+
+    @Expose
+    @SerializedName(value = "propensity")
+    val propensity: Propensity,
+
+    @Expose
+    @SerializedName(value = "follower")
+    val follower: String,
+
+    @Expose
+    @SerializedName(value = "following")
+    val following: String,
+
+    @Expose
+    @SerializedName(value = "loved_post")
+    val lovedPost: List<String>,
+
+    @Expose
+    @SerializedName(value = "vip_choice")
+    val vipChoice: String,
+)
+
 data class GetData(
     val getData: List<NetworkUserResponse>
 )

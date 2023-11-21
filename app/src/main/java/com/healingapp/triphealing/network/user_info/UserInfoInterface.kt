@@ -1,11 +1,12 @@
-package com.healingapp.triphealing.network.post_detail
+
+package com.healingapp.triphealing.network.user_info
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.healingapp.triphealing.model.post.NetworkCommentResponse
-import com.healingapp.triphealing.model.post.NetworkDeleteResponse
+import com.healingapp.triphealing.model.post.NetworkRecWriterResponse
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.post.NetworkResponse
+import com.healingapp.triphealing.model.user.UserInfoResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -17,38 +18,16 @@ import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
-interface PostDetailInterface {
+interface UserInfoInterface {
     @FormUrlEncoded
-    @POST(value = Secret.POST_DETAIL)
+    @POST(value = Secret.USER_INFO_URL)
+
     fun getNetwork(
-        @Field("id") id:String
-    ):Call<NetworkResponse>
-
-    @FormUrlEncoded
-    @POST(value = Secret.POST_DELETE)
-    fun deletePost(
-        @Field("id") id:String,
         @Field("username") userName:String
-    ):Call<NetworkDeleteResponse>
-
-    @FormUrlEncoded
-    @POST(value = Secret.POST_COMMENT)
-    fun postComment(
-        @Field("id") id:String,
-        @Field("nickname") nickName:String,
-        @Field("body") body:String,
-    ):Call<NetworkCommentResponse>
-
-    @FormUrlEncoded
-    @POST(value = Secret.POST_DETAIL)
-    fun postLoved(
-        @Field("id") id:String,
-        @Field("username") userName:String,
-        @Field("loved") loved:String,
-    ):Call<NetworkResponse>
+    ):Call<UserInfoResponse>
 
     companion object {
-        fun create(): PostDetailInterface {
+        fun create(): UserInfoInterface {
             val gson: Gson = GsonBuilder().setLenient().create()
 
             val interceptor = HttpLoggingInterceptor().apply {
@@ -61,7 +40,7 @@ interface PostDetailInterface {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
-                .create(PostDetailInterface::class.java)
+                .create(UserInfoInterface::class.java)
         }
     }
 

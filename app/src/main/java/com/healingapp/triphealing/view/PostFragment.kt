@@ -1,37 +1,21 @@
 package com.healingapp.triphealing.view
 
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.Spanned
 import android.text.method.LinkMovementMethod
-import android.text.style.ImageSpan
 import android.util.Log
-import android.view.ContextMenu
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.text.HtmlCompat
-import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.healingapp.triphealing.LoginActivity
 import com.healingapp.triphealing.MainActivity
 import com.healingapp.triphealing.PostActivity
 import com.healingapp.triphealing.ProfileActivity
@@ -40,8 +24,10 @@ import com.healingapp.triphealing.databinding.FragmentPostBinding
 import com.healingapp.triphealing.datastore.DataStoreApplication
 import com.healingapp.triphealing.model.post.NetworkDeleteResponse
 import com.healingapp.triphealing.model.post.NetworkResponse
+import com.healingapp.triphealing.model.user.UserInfoResponse
 import com.healingapp.triphealing.network.post.ItemComment
 import com.healingapp.triphealing.network.post_detail.PostDetailInterface
+import com.healingapp.triphealing.network.user_info.UserInfoInterface
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.utils.ImageGetter
 import com.healingapp.triphealing.viewmodel.user.UserViewModel
@@ -62,6 +48,7 @@ class PostFragment : Fragment() {
     private lateinit var viewModelUser: UserViewModel
 
     val postDetailInterface by lazy { PostDetailInterface.create() }
+    val userInfoInterface by lazy { UserInfoInterface.create() }
 
     var userName: String? = null
 
@@ -85,14 +72,31 @@ class PostFragment : Fragment() {
 
         viewModelUser = ViewModelProvider(requireActivity())[UserViewModel::class.java]
 
-
         CoroutineScope(Dispatchers.Main).launch {
             launch {
                 userName = DataStoreApplication.getInstance().getDataStore().username.first()
-                Log.e("PostFragment","username: ${userName}")
+                Log.e("PostFragment","DataStoreusername: ${userName}")
             }.join()
 
             launch {
+                userName?.let { userInfoInterface.getNetwork(it).enqueue(object : Callback<UserInfoResponse> {
+                    //서버 요청 성공
+                    override fun onResponse(
+                        call: Call<UserInfoResponse>,
+                        response: Response<UserInfoResponse>
+                    ) {
+                        if(response.body()?.lovedPost?.contains(id) == true){
+                            binding.layoutContainer.btnLoved.visibility = View.VISIBLE
+                        }
+                        else binding.layoutContainer.btnNotLoved.visibility = View.VISIBLE
+                    }
+
+                    override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
+                        //
+                    }
+                })
+                }
+
                 postDetailInterface.getNetwork(id)
                     .enqueue(object : Callback<NetworkResponse> {
                         //서버 요청 성공
@@ -100,7 +104,6 @@ class PostFragment : Fragment() {
                             call: Call<NetworkResponse>,
                             response: Response<NetworkResponse>
                         ) {
-                            Log.e("TEST comment", response.body()?.comment.toString())
                             Log.e("PostFragment", response.body().toString())
 
                             binding.tvPostTitle.text = response.body()?.title
@@ -157,14 +160,6 @@ class PostFragment : Fragment() {
 
                                 binding.layoutContainer.countComments.text = "댓글: ${response.body()!!.comment.size}개 보기"
 
-                                val commentData:ArrayList<ItemComment> = ArrayList()
-
-                                for(i in 0 until response.body()!!.comment.size){
-
-                                    //Log.e("TEST COMMENT DATA", "${nickName}, ${comment}, ${date}, ${img}")
-                                    commentData.add(ItemComment(response.body()!!.comment[i].writer,response.body()!!.comment[i].body,response.body()!!.comment[i].date,response.body()!!.comment[i].profileImg))
-
-                                }
 
                             }
                             else{
@@ -195,6 +190,47 @@ class PostFragment : Fragment() {
             }
 
         }
+
+        binding.layoutContainer.btnNotLoved.setOnClickListener {
+
+            userName?.let { it1 ->
+                postDetailInterface.postLoved(id, it1,"true").enqueue(object : Callback<NetworkResponse> {
+                    //서버 요청 성공
+                    override fun onResponse(
+                        call: Call<NetworkResponse>,
+                        response: Response<NetworkResponse>
+                    ) {
+                        binding.layoutContainer.btnNotLoved.visibility = View.INVISIBLE
+                        binding.layoutContainer.btnLoved.visibility = View.VISIBLE
+                    }
+
+                    override fun onFailure(call: Call<NetworkResponse>, t: Throwable) {
+                        //
+                    }
+                })
+            }
+        }
+
+        binding.layoutContainer.btnLoved.setOnClickListener {
+
+            userName?.let { it1 ->
+                postDetailInterface.postLoved(id, it1,"false").enqueue(object : Callback<NetworkResponse> {
+                    //서버 요청 성공
+                    override fun onResponse(
+                        call: Call<NetworkResponse>,
+                        response: Response<NetworkResponse>
+                    ) {
+                        binding.layoutContainer.btnLoved.visibility = View.INVISIBLE
+                        binding.layoutContainer.btnNotLoved.visibility = View.VISIBLE
+                    }
+
+                    override fun onFailure(call: Call<NetworkResponse>, t: Throwable) {
+                        //
+                    }
+                })
+            }
+        }
+
 
         binding.layoutContainer.btnSetPost.setOnClickListener {
             userName?.let { it1 -> showPopupMenu(binding.layoutContainer.btnSetPost, id, it1) }
