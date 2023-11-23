@@ -115,11 +115,11 @@ data class UserInfoResponse(
 
     @Expose
     @SerializedName(value = "follower")
-    val follower: String,
+    val follower: List<String>,
 
     @Expose
     @SerializedName(value = "following")
-    val following: String,
+    val following: List<String>,
 
     @Expose
     @SerializedName(value = "loved_post")
@@ -128,6 +128,18 @@ data class UserInfoResponse(
     @Expose
     @SerializedName(value = "vip_choice")
     val vipChoice: String,
+
+    @Expose
+    @SerializedName(value = "profile_img")
+    val profileImg: String,
+
+    @Expose
+    @SerializedName(value = "background_img")
+    val backgroundImg: String,
+
+    @Expose
+    @SerializedName(value = "introduce_text")
+    val introduceText: String
 )
 
 data class GetData(

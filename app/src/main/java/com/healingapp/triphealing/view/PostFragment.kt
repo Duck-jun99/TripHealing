@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.healingapp.triphealing.MainActivity
 import com.healingapp.triphealing.PostActivity
 import com.healingapp.triphealing.ProfileActivity
+import com.healingapp.triphealing.ProfileAnotherActivity
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.databinding.FragmentPostBinding
 import com.healingapp.triphealing.datastore.DataStoreApplication
@@ -50,7 +51,7 @@ class PostFragment : Fragment() {
     val postDetailInterface by lazy { PostDetailInterface.create() }
     val userInfoInterface by lazy { UserInfoInterface.create() }
 
-    var userName: String? = null
+    lateinit var userName: String
 
     private var flag = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,7 +125,7 @@ class PostFragment : Fragment() {
                             }
 
 
-                            //
+
                             if(response.body()?.profileImg != null){
                                 Glide.with(requireActivity())
                                     .load(Secret.MEDIA_URL + response.body()!!.profileImg)
@@ -177,6 +178,21 @@ class PostFragment : Fragment() {
                                     )
                                     fragment_comment.commit()
                                 }
+                            }
+
+                            binding.layoutContainer.imgProfile.setOnClickListener {
+                                if(response.body()!!.username != userName){
+                                    val intent = Intent(requireActivity(), ProfileAnotherActivity::class.java)
+                                    intent.putExtra("username",response.body()!!.username)
+                                    startActivity(intent)
+                                    requireActivity().finish()
+                                }
+                                else if(response.body()!!.username == userName){
+                                    val intent = Intent(requireActivity(), ProfileActivity::class.java)
+                                    startActivity(intent)
+                                    requireActivity().finish()
+                                }
+
                             }
                         }
 
@@ -239,11 +255,7 @@ class PostFragment : Fragment() {
 
         binding.imgPost.scaleType = ImageView.ScaleType.CENTER_CROP
 
-        binding.layoutContainer.imgProfile.setOnClickListener {
-            val intent = Intent(requireActivity(), ProfileActivity::class.java)
-            startActivity(intent)
-            requireActivity().finish()
-        }
+
 
 
     }

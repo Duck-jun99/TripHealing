@@ -26,6 +26,15 @@ interface UserInfoInterface {
         @Field("username") userName:String
     ):Call<UserInfoResponse>
 
+    @FormUrlEncoded
+    @POST(value = Secret.USER_DETATIL_URL)
+
+    fun postFollow(
+        @Field("username") userName:String,
+        @Field("user_me_name") userMeName:String,
+        @Field("follow") follow:String
+    ):Call<UserInfoResponse>
+
     companion object {
         fun create(): UserInfoInterface {
             val gson: Gson = GsonBuilder().setLenient().create()

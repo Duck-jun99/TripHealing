@@ -26,6 +26,7 @@ import com.healingapp.triphealing.WriteActivity
 import com.healingapp.triphealing.adapter.FamRvAdapter
 import com.healingapp.triphealing.adapter.LatestRvAdapter
 import com.healingapp.triphealing.ProfileActivity
+import com.healingapp.triphealing.ProfileAnotherActivity
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.adapter.MbtiRvAdapter
 import com.healingapp.triphealing.adapter.RecRVAdapter
@@ -296,6 +297,13 @@ class MainFragment : Fragment() {
                     .error(R.drawable.group_24)
                     .into(binding.layoutMain2.imgPickUser)
                 binding.layoutMain2.tvPickUser.text = response[0].nickname
+
+                binding.layoutMain2.imgPickUser.setOnClickListener {
+                    var intent = Intent(context, ProfileAnotherActivity::class.java)
+                    intent.putExtra("username",response[0].username)
+                    startActivity(intent)
+                }
+
                 Glide.with(this)
                     .load(Secret.MEDIA_URL+response[0].coverImage)
                     .error(R.drawable.background2)
@@ -303,6 +311,13 @@ class MainFragment : Fragment() {
                 binding.layoutMain2.tvTitleBestView.text = HtmlCompat.fromHtml("<b>${response[0].nickname}님</b>의 이 작품을 추천드려요.", HtmlCompat.FROM_HTML_MODE_LEGACY)
                 binding.layoutMain2.tvTitle.text = response[0].title
                 binding.layoutMain2.tvTitle2.text = response[0].title
+
+                binding.layoutMain2.imgCoverPick.setOnClickListener {
+                    var intent = Intent(context, PostActivity::class.java)
+                    intent.putExtra("id",response[0].id)
+                    startActivity(intent)
+                }
+
                 binding.layoutMain2.tvAnotherPost.text = HtmlCompat.fromHtml("<b>${response[0].nickname}님</b>의 다른 글", HtmlCompat.FROM_HTML_MODE_LEGACY)
 
 
