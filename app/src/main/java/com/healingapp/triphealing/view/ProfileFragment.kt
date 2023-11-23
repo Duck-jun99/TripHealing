@@ -97,6 +97,9 @@ class ProfileFragment : Fragment() {
                     binding.tvNickname.text = response.userInfo.nickname
                     binding.tvIntroduce.text = response.userInfo.introduceText
 
+                    binding.tvFollower.text = "팔로우: ${response.userInfo.follower.size.toString()}명"
+                    binding.tvFollowing.text = "팔로잉: ${response.userInfo.following.size.toString()}명"
+
                     //여행성향
                     binding.tvPropensity.text = HtmlCompat.fromHtml(
                         "<p><span style=\"background-color:#FFE6E6\"> ${response.userInfo.propensity.mbti} </span> &nbsp;" +

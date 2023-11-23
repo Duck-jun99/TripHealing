@@ -53,6 +53,16 @@ data class UserInfo(
     @Expose
     @SerializedName(value = "propensity")
     val propensity: Propensity,
+
+    @Expose
+    @SerializedName(value = "follower")
+    val follower: List<String>,
+
+    @Expose
+    @SerializedName(value = "following")
+    val following: List<String>,
+
+
 )
 
 data class Propensity(
