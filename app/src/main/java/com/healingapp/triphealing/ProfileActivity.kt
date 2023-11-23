@@ -20,7 +20,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileBinding
 
-    private lateinit var viewModelPost: NetworkViewModel
+    //private lateinit var viewModelPost: NetworkViewModel
     private lateinit var viewModelUser: UserViewModel
 
 
@@ -40,7 +40,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
         //ViewModel 가져오기
-        viewModelPost = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[NetworkViewModel::class.java]
+        //viewModelPost = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[NetworkViewModel::class.java]
         viewModelUser = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[UserViewModel::class.java]
 
         //viewModelDataStore = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[DataStoreViewModel::class.java]
@@ -58,7 +58,7 @@ class ProfileActivity : AppCompatActivity() {
 
 
 
-        viewModelPost.getNetwork()
+        //viewModelPost.getNetwork()
 
 
         binding.btnUpdate.setOnClickListener {

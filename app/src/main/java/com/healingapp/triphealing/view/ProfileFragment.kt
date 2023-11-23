@@ -69,7 +69,7 @@ class ProfileFragment : Fragment() {
 
 
         // ProfileActivity에서 설정한 ViewModel 가져오기
-        viewModelPost = ViewModelProvider(requireActivity())[NetworkViewModel::class.java]
+        //viewModelPost = ViewModelProvider(requireActivity())[NetworkViewModel::class.java]
         viewModelUser = ViewModelProvider(requireActivity())[UserViewModel::class.java]
         //viewModelUser = ViewModelProvider(this)[UserViewModel::class.java]
 
