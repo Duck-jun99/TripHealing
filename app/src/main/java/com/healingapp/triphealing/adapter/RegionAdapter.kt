@@ -36,7 +36,7 @@ class RegionAdapter(val itemList: ArrayList<ItemRegionRV>) :
          */
 
         Glide.with(holder.imgRegion.context)
-            .load(R.drawable.seoul)
+            .load(itemList[position].regionImage)
             .error(R.drawable.tree)
             .into(holder.imgRegion)
         holder.imgRegion.clipToOutline = true

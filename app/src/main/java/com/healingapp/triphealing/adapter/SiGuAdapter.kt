@@ -27,7 +27,7 @@ class SiGuAdapter(val itemList: ArrayList<ItemSiGuRV>) :
         holder.tvRegion.text = itemList[position].region
 
         Glide.with(holder.imgRegion.context)
-            .load(R.drawable.seoul)
+            .load(itemList[position].regionImage)
             .error(R.drawable.tree)
             .into(holder.imgRegion)
 

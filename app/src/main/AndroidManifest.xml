@@ -7,18 +7,31 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" android:minSdkVersion="33"/>
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" android:minSdkVersion="33"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" android:minSdkVersion="33"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" android:minSdkVersion="33"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" android:minSdkVersion="33"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS"
         android:minSdkVersion="33" />
-
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        android:minSdkVersion="33" />
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_IMAGES"
+        android:minSdkVersion="33" />
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_VIDEO"
+        android:minSdkVersion="33" />
+    <uses-permission
+        android:name="android.permission.READ_MEDIA_AUDIO"
+        android:minSdkVersion="33" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        android:minSdkVersion="33" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".datastore.DataStoreApplication"
@@ -32,6 +45,10 @@
         android:theme="@style/Theme.TripHealing"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".TripActivity"
+            android:exported="false" />
+
         <service
             android:name=".utils.FCMService"
             android:enabled="true"
@@ -41,26 +58,27 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".PostActivity"
             android:exported="false"
-            android:theme="@style/Theme.TripHealing"/>
+            android:theme="@style/Theme.TripHealing" />
         <activity
             android:name=".WriteActivity"
             android:exported="false"
-            android:theme="@style/Theme.TripHealing"/>
+            android:theme="@style/Theme.TripHealing" />
         <activity
             android:name=".SignUpActivity"
             android:exported="false"
-            android:theme="@style/Theme.TripHealing"/>
+            android:theme="@style/Theme.TripHealing" />
         <activity
             android:name=".ProfileActivity"
             android:exported="false"
-            android:theme="@style/Theme.TripHealing"/>
+            android:theme="@style/Theme.TripHealing" />
         <activity
             android:name=".ProfileAnotherActivity"
             android:exported="false"
-            android:theme="@style/Theme.TripHealing"/>
+            android:theme="@style/Theme.TripHealing" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -74,7 +92,6 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true" />
-
     </application>
 
 </manifest>
