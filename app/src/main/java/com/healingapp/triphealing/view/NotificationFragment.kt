@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.healingapp.triphealing.adapter.FamRvAdapter
 import com.healingapp.triphealing.adapter.NotificationRvAdapter
@@ -14,6 +15,7 @@ import com.healingapp.triphealing.databinding.FragmentNotificationBinding
 import com.healingapp.triphealing.db.NotificationDatabase
 import com.healingapp.triphealing.db.NotificationEntity
 import com.healingapp.triphealing.network.post.ItemFamRV
+import com.healingapp.triphealing.utils.SwipeController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -41,11 +43,21 @@ class NotificationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
+
         val notificationList = ArrayList<NotificationEntity>()
-        val notiRvAdapter = NotificationRvAdapter(notificationList)
+        val notiRvAdapter = context?.let { NotificationRvAdapter(it, notificationList) }
+
+        val itemTouchHelper = notiRvAdapter?.let { SwipeController(it) }
+            ?.let { ItemTouchHelper(it) }
+
+        itemTouchHelper?.attachToRecyclerView(binding.recNotification)
 
         binding.recNotification.adapter = notiRvAdapter
-        binding.recNotification.layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+        val manager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
+        manager.reverseLayout = true
+        manager.stackFromEnd = true
+
+        binding.recNotification.layoutManager = manager
 
 
         db = context?.let { NotificationDatabase.getInstance(it) }!!
@@ -59,15 +71,19 @@ class NotificationFragment : Fragment() {
                 for (i:Int in 0 until data.size.toInt()){
                     notificationList.add(data[i])
                 }
-                notiRvAdapter.notifyDataSetChanged()
-                notiRvAdapter.setItemClickListener(object: NotificationRvAdapter.OnItemClickListener{
+                notiRvAdapter?.notifyDataSetChanged()
+                notiRvAdapter?.setItemClickListener(object: NotificationRvAdapter.OnItemClickListener{
                     override fun onClick(v: View, position: Int) {
-                        db.notificationDao().checkNotification(position)
+                        CoroutineScope(Dispatchers.Default).launch {
+                            //수정 필요
+                            db.notificationDao().checkNotification(position)
+
+                        }
+
                     }
                 })
             }
         }
-
 
     }
 }

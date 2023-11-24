@@ -1,35 +1,54 @@
 package com.healingapp.triphealing.adapter
 
+import android.content.Context
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
+import com.healingapp.triphealing.db.NotificationDatabase
 import com.healingapp.triphealing.db.NotificationEntity
 import com.healingapp.triphealing.network.post.ItemFamRV
 import com.healingapp.triphealing.network.post.ItemRecRV
 import com.healingapp.triphealing.secret.Secret
+import com.healingapp.triphealing.utils.ItemTouchHelperListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 
-class NotificationRvAdapter(val itemList: ArrayList<NotificationEntity>) :
-    RecyclerView.Adapter<NotificationRvAdapter.BoardViewHolder>() {
+class NotificationRvAdapter(private val context: Context, val itemList: ArrayList<NotificationEntity>) :
+    RecyclerView.Adapter<NotificationRvAdapter.BoardViewHolder>(), ItemTouchHelperListener {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_notification, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_notification, parent, false)
         return BoardViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (NotificationDatabase.getInstance(holder.back.context)?.notificationDao()
+                    ?.getNotification(position + 1) != 1
+            ) {
+                holder.back.setBackgroundColor(Color.WHITE)
+            } else {
+                holder.back.setBackgroundColor(Color.parseColor("#FEE3CF"))
+            }
+        }
         holder.tv_title.text = itemList[position].title
         holder.tv_body.text = itemList[position].body
         Glide.with(holder.img.context)
             .load(
-            R.drawable.group_24)
+                R.drawable.group_24
+            )
             .into(holder.img)
         holder.img.clipToOutline = true
 
@@ -53,14 +72,33 @@ class NotificationRvAdapter(val itemList: ArrayList<NotificationEntity>) :
         this.itemClickListener = onItemClickListener
     }
 
-    private lateinit var itemClickListener : OnItemClickListener
+    private lateinit var itemClickListener: OnItemClickListener
 
 
     inner class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tv_title = itemView.findViewById<TextView>(R.id.tv_noti_title)
         val tv_body = itemView.findViewById<TextView>(R.id.tv_noti_body)
         val img = itemView.findViewById<ImageView>(R.id.img_noti)
+        val back = itemView.findViewById<LinearLayout>(R.id.view_noti)
 
     }
+
+    override fun onLeftClick(position: Int, viewHolder: RecyclerView.ViewHolder?) {
+
+    }
+
+    override fun onRightClick(position: Int, viewHolder: RecyclerView.ViewHolder?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            NotificationDatabase.getInstance(context)?.notificationDao()
+                ?.deleteNotification(position)
+        }
+    }
+
+    override fun onItemMove(from_position: Int, to_position: Int): Boolean = false
+
+    override fun onItemSwipe(position: Int) {
+
+    }
+
 
 }

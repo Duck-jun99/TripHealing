@@ -36,7 +36,7 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModelPost: NetworkViewModel
+    //private lateinit var viewModelPost: NetworkViewModel
     private lateinit var viewModelUser: UserViewModel
 
     val userPostInterface by lazy { UserPostInterface.create() }
