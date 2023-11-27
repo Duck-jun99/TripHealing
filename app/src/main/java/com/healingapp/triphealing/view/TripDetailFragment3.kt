@@ -15,6 +15,7 @@ import com.healingapp.triphealing.R
 import com.healingapp.triphealing.TripDetailActivity
 import com.healingapp.triphealing.adapter.TripDetailAdapter
 import com.healingapp.triphealing.databinding.FragmentTripDetail2Binding
+import com.healingapp.triphealing.databinding.FragmentTripDetail3Binding
 import com.healingapp.triphealing.model.trip.NetworkTripResponse
 import com.healingapp.triphealing.network.trip.ItemTripDetailRV
 import com.healingapp.triphealing.network.trip.TripInterface
@@ -22,8 +23,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TripDetailFragment2: Fragment() {
-    private var _binding: FragmentTripDetail2Binding? = null
+class TripDetailFragment3: Fragment() {
+    private var _binding: FragmentTripDetail3Binding? = null
     private val binding get() = _binding!!
 
     private val maxRetries = 3
@@ -38,7 +39,7 @@ class TripDetailFragment2: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentTripDetail2Binding.inflate(inflater, container, false)
+        _binding = FragmentTripDetail3Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -72,7 +73,7 @@ class TripDetailFragment2: Fragment() {
                     MobileApp="TripHealing",
                     serviceKey=resources.getString(R.string.api_key_decoding_data_go_kr),
                     _type="json",
-                    contentTypeId="14", //12:관광지 14:문화시설 32:숙박
+                    contentTypeId="32", //12:관광지 14:문화시설 32:숙박
                     areaCode=areaCode.toString(),
                     sigunguCode=code.toString(),
                 ).enqueue(object : Callback<NetworkTripResponse> {

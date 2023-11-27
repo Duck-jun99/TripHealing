@@ -6,6 +6,7 @@ import com.healingapp.triphealing.model.post.NetworkCommentResponse
 import com.healingapp.triphealing.model.post.NetworkDeleteResponse
 import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.model.post.NetworkResponse
+import com.healingapp.triphealing.model.trip.NetworkTripDetailInfoResponse
 import com.healingapp.triphealing.model.trip.NetworkTripResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -35,6 +36,23 @@ interface TripInterface {
         @Query("sigunguCode") sigunguCode:String,
 
         ):Call<NetworkTripResponse>
+
+    @GET(value = Secret.DATA_DETAIL)
+    fun getDetailNetwork(
+        @Query("MobileOS") MobileOS:String,
+        @Query("MobileApp") MobileApp:String,
+        @Query("serviceKey") serviceKey:String,
+        @Query("_type") _type:String,
+        @Query("contentId") contentId:String,
+        @Query("defaultYN") defaultYN:String,
+        @Query("firstImageYN") firstImageYN:String,
+        @Query("areacodeYN") areacodeYN:String,
+        //@Query("catcodeYN") catcodeYN:String,
+        @Query("addrinfoYN") addrinfoYN:String,
+        @Query("mapinfoYN") mapinfoYN:String,
+        @Query("overviewYN") overviewYN:String,
+
+        ):Call<NetworkTripDetailInfoResponse>
 
     companion object {
         fun create(): TripInterface {

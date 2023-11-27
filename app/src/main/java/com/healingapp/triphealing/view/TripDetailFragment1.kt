@@ -6,7 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.JsonSyntaxException
 import com.healingapp.triphealing.R
@@ -70,7 +74,7 @@ class TripDetailFragment1: Fragment() {
                     MobileApp="TripHealing",
                     serviceKey=resources.getString(R.string.api_key_decoding_data_go_kr),
                     _type="json",
-                    contentTypeId="12", //12:관광지 //32:숙박
+                    contentTypeId="12", //12:관광지 14:문화시설 32:숙박
                     areaCode=areaCode.toString(),
                     sigunguCode=code.toString(),
                 ).enqueue(object : Callback<NetworkTripResponse> {
@@ -87,6 +91,16 @@ class TripDetailFragment1: Fragment() {
                             tripDetailItem.add(ItemTripDetailRV(title,addr,img))
                             tripDetailAdapter.notifyDataSetChanged()
                         }
+
+                        tripDetailAdapter.setItemClickListener(object : TripDetailAdapter.OnItemClickListener{
+                            override fun onClick(v: View, position: Int) {
+                                setFragmentResult("requestKey", bundleOf("contentId" to response.body()!!.response.body.items.item[position].contentid))
+                                parentFragmentManager.beginTransaction()
+                                    .replace(R.id.fragment_container_view,TripDetailInfoFragment())
+                                    .commit()
+                            }
+
+                        })
 
                     }
 

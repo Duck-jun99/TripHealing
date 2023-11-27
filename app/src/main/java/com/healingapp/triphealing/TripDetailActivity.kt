@@ -5,15 +5,22 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.healingapp.triphealing.databinding.ActivityTripBinding
 import com.healingapp.triphealing.view.TripDetailFragment1
 import com.healingapp.triphealing.view.TripDetailFragment2
+import com.healingapp.triphealing.view.TripDetailFragment3
 
 class TripDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTripBinding
+    private lateinit var appBarConfiguration: AppBarConfiguration
+
     lateinit var codeArray:ArrayList<String>
     var areaCode:Int = 0
     var position:Int = 0
@@ -35,6 +42,7 @@ class TripDetailActivity : AppCompatActivity() {
         var viewPager2Adatper = ViewPager2Adapter(this)
         viewPager2Adatper.addFragment(TripDetailFragment1())
         viewPager2Adatper.addFragment(TripDetailFragment2())
+        viewPager2Adatper.addFragment(TripDetailFragment3())
 
         //Adapter 연결
         binding.viewPager2Container.apply {
@@ -52,7 +60,8 @@ class TripDetailActivity : AppCompatActivity() {
             Log.e("YMC", "ViewPager position: ${position}")
             when (position) {
                 0 -> tab.text = "관광지"
-                1 -> tab.text = "숙박"
+                1 -> tab.text = "문화시설"
+                2 -> tab.text = "숙박시설"
             }
         }.attach()
     }
@@ -82,4 +91,5 @@ class ViewPager2Adapter(fragmentActivity: FragmentActivity) : FragmentStateAdapt
         notifyItemRemoved(fragments.size)
         //TODO: notifyItemRemoved!!
     }
+
 }
