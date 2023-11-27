@@ -1,10 +1,12 @@
 package com.healingapp.triphealing.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -12,7 +14,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.gson.JsonSyntaxException
 import com.healingapp.triphealing.R
+import com.healingapp.triphealing.TripDetailActivity
 import com.healingapp.triphealing.adapter.RegionAdapter
 import com.healingapp.triphealing.adapter.SiGuAdapter
 import com.healingapp.triphealing.databinding.FragmentTripBinding
@@ -34,6 +38,8 @@ class TripFragment : Fragment() {
 
     private lateinit var viewModelPost: NetworkViewModel
     private lateinit var viewModelUser: UserViewModel
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -406,40 +412,11 @@ class TripFragment : Fragment() {
 
         siguRvAdapter.setItemClickListener(object : SiGuAdapter.OnItemClickListener{
             override fun onClick(v: View, position: Int) {
-                for (codeItem in codeArray) {
-                    val parts = codeItem.split("|")
-                    val region = parts[0]
-                    val code = parts[1].toInt()
-
-                    if(position+1 == code){
-                        Log.e("siguRvAdapter", code.toString())
-                        TripInterface.create().getNetwork(
-                            numOfRows=0,
-                            pageNo=0,
-                            MobileOS="AND",
-                            MobileApp="TripHealing",
-                            serviceKey=resources.getString(R.string.api_key_encoding_data_go_kr),
-                            _type="json",
-                            contentTypeId="12", //12:관광지
-                            areaCode=areaCode.toString(),
-                            sigunguCode=code.toString(),
-                        ).enqueue(object :Callback<NetworkTripResponse>{
-                            override fun onResponse(
-                                call: Call<NetworkTripResponse>,
-                                response: Response<NetworkTripResponse>
-                            ) {
-                                Log.e("TripInterface",response.body().toString())
-                            }
-
-                            override fun onFailure(call: Call<NetworkTripResponse>, t: Throwable) {
-                                //TODO("Not yet implemented")
-                                Log.e("TripInterface",t.message.toString())
-                            }
-
-                        })
-                    }
-
-                }
+                var intent = Intent(context, TripDetailActivity::class.java)
+                intent.putStringArrayListExtra("codeArray",codeArray)
+                intent.putExtra("areaCode",areaCode)
+                intent.putExtra("position",position)
+                startActivity(intent)
             }
 
         })

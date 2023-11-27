@@ -5,43 +5,42 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.network.post.ItemRecRV
 import com.healingapp.triphealing.network.trip.ItemRegionRV
+import com.healingapp.triphealing.network.trip.ItemSiGuRV
+import com.healingapp.triphealing.network.trip.ItemTripDetailRV
 import com.healingapp.triphealing.secret.Secret
 
-class RegionAdapter(val itemList: ArrayList<ItemRegionRV>) :
-    RecyclerView.Adapter<RegionAdapter.BoardViewHolder>() {
+class TripDetailAdapter(val itemList: ArrayList<ItemTripDetailRV>) :
+    RecyclerView.Adapter<TripDetailAdapter.BoardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_choose_region, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_trip_detail, parent, false)
         return BoardViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
-        holder.tvRegion.text = itemList[position].region
-        //holder.tv_author.text = itemList[position].author
+        holder.tvTitle.text = itemList[position].title
+        holder.tvAddr.text = itemList[position].addr
 
-
-        holder.imgRegion.apply {
+        holder.img.apply {
             Glide.with(this)
-                .load(itemList[position].regionImage)
+                .load(itemList[position].img)
                 .error(R.drawable.tree)
                 .into(this)
+
             clipToOutline = true
         }
+        holder.img.clipToOutline = true
 
 
-/*
-        Glide.with(holder.imgRegion.context)
-            .load(itemList[position].regionImage)
-            .error(R.drawable.tree)
-            .into(holder.imgRegion)
-        holder.imgRegion.clipToOutline = true
-*/
+
+
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)
         }
@@ -63,8 +62,9 @@ class RegionAdapter(val itemList: ArrayList<ItemRegionRV>) :
 
 
     inner class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvRegion = itemView.findViewById<TextView>(R.id.tvRegion)
-        val imgRegion = itemView.findViewById<ImageView>(R.id.imgRegion)
+        val tvTitle = itemView.findViewById<TextView>(R.id.tvTripTitle)
+        val tvAddr = itemView.findViewById<TextView>(R.id.tvTripAddr)
+        val img = itemView.findViewById<ImageView>(R.id.imgTrip)
 
 
     }
