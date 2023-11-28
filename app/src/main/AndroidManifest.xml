@@ -33,6 +33,9 @@
         android:minSdkVersion="33" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
         android:name=".datastore.DataStoreApplication"
         android:allowBackup="true"
@@ -92,6 +95,13 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true" />
+
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="9fba1f073802881d8d44b77082d5a318" />
+
     </application>
+
 
 </manifest>

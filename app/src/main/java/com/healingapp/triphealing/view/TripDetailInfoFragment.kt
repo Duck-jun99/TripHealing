@@ -1,16 +1,17 @@
 package com.healingapp.triphealing.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -18,13 +19,14 @@ import com.google.gson.JsonSyntaxException
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.TripDetailActivity
 import com.healingapp.triphealing.adapter.TripAnotherAdapter
-import com.healingapp.triphealing.adapter.TripDetailAdapter
-import com.healingapp.triphealing.databinding.FragmentTripDetail1Binding
 import com.healingapp.triphealing.databinding.FragmentTripDetailInfoBinding
 import com.healingapp.triphealing.model.trip.NetworkTripDetailInfoResponse
 import com.healingapp.triphealing.model.trip.NetworkTripResponse
 import com.healingapp.triphealing.network.trip.ItemTripDetailRV
 import com.healingapp.triphealing.network.trip.TripInterface
+import net.daum.mf.map.api.MapPOIItem
+import net.daum.mf.map.api.MapPoint
+import net.daum.mf.map.api.MapView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,8 +66,12 @@ class TripDetailInfoFragment: Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val mapView = MapView(requireContext())
+        val marker = MapPOIItem()
 
         var codeArray = (activity as TripDetailActivity).codeArray
         var areaCode = (activity as TripDetailActivity).areaCode
@@ -73,7 +79,7 @@ class TripDetailInfoFragment: Fragment() {
         var contentId = ""
         var regionName = (activity as TripDetailActivity).regionName
 
-        binding.tvAnotherTrip.text=HtmlCompat.fromHtml("<b>${regionName}</b>의 다른 관광지는 어때요?",HtmlCompat.FROM_HTML_MODE_LEGACY)
+        binding.tvAnotherTrip.text=HtmlCompat.fromHtml("<b style=\"color:#FA7E56;\">${regionName}</b>의 다른 관광지는 어때요?",HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         Log.e("TripDetailFragment",codeArray.toString())
         Log.e("TripDetailFragment",position.toString())
@@ -130,6 +136,18 @@ class TripDetailInfoFragment: Fragment() {
                             binding.tvAddrTripDetailInfo.text = response.body()!!.response.body.items.item[0].addr1
                             //binding.tvHomepageTripDetailInfo.text = HtmlCompat.fromHtml(response.body()!!.response.body.items.item[0].homepage,HtmlCompat.FROM_HTML_MODE_LEGACY)
 
+                            if((response.body()!!.response.body.items.item[0].mapy != null) and (response.body()!!.response.body.items.item[0].mapx != null)){
+                                Log.e("Not Null", "Not Null")
+                                mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(response.body()!!.response.body.items.item[0].mapy.toDouble(), response.body()!!.response.body.items.item[0].mapx.toDouble()), false)
+                                marker.itemName = "임시"
+                                marker.tag = 0
+                                marker.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.response.body.items.item[0].mapy.toDouble(), response.body()!!.response.body.items.item[0].mapx.toDouble())
+                                marker.markerType = MapPOIItem.MarkerType.BluePin
+
+                                mapView.addPOIItem(marker)
+                                binding.mapView.addView(mapView)
+                            }
+
                         }
 
                         override fun onFailure(call: Call<NetworkTripDetailInfoResponse>, t: Throwable) {
@@ -155,22 +173,37 @@ class TripDetailInfoFragment: Fragment() {
 
             }
 
-
         }
 
         setFragmentResultListener("requestKey2") {requestKey2, bundle ->
-            //var anotherRegionItem = bundle.getParcelableArrayList("anotherRegion",ItemTripDetailRV::class.java)
+
             var anotherRegionItem = bundle.getParcelableArrayList("anotherRegion",ItemTripDetailRV::class.java)
-            Log.e("setFragmentResultListener",anotherRegionItem.toString())
 
-            var tripAnotherAdapter = anotherRegionItem?.let { TripAnotherAdapter(it) }
+            try{
+                Log.e("setFragmentResultListener",anotherRegionItem.toString())
 
-            binding.rvAnotherTrip.adapter = tripAnotherAdapter
-            binding.rvAnotherTrip.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                var tripAnotherAdapter = anotherRegionItem?.let { TripAnotherAdapter(it) }
 
-            tripAnotherAdapter!!.notifyDataSetChanged()
+                binding.rvAnotherTrip.adapter = tripAnotherAdapter
+                binding.rvAnotherTrip.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+                tripAnotherAdapter!!.notifyDataSetChanged()
+
+            }catch (e: IllegalArgumentException){
+                Toast.makeText(requireContext(),"안드로이드를 업데이트해주세요!",Toast.LENGTH_SHORT).show()
+            }
         }
 
+        //MapView 스크롤을 위해(ScrollView에 움직임 뺏기지 않게 함)
+        mapView.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> binding.scrollView.requestDisallowInterceptTouchEvent(true)
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> binding.scrollView.requestDisallowInterceptTouchEvent(
+                    false
+                )
+            }
+            mapView.onTouchEvent(event)
+        }
 
     }
 
