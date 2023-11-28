@@ -1,5 +1,7 @@
 package com.healingapp.triphealing.network.trip
 
+import androidx.versionedparcelable.ParcelField
+
 data class ItemRegionRV(
     val region: String,
     val regionImage: Int

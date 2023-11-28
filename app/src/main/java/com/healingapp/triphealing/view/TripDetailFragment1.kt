@@ -96,6 +96,7 @@ class TripDetailFragment1: Fragment() {
                         tripDetailAdapter.setItemClickListener(object : TripDetailAdapter.OnItemClickListener{
                             override fun onClick(v: View, position: Int) {
                                 setFragmentResult("requestKey", bundleOf("contentId" to response.body()!!.response.body.items.item[position].contentid))
+                                setFragmentResult("requestKey2",bundleOf("anotherRegion" to tripDetailItem))
                                 parentFragmentManager.beginTransaction()
                                     .replace(R.id.fragment_container_view,TripDetailInfoFragment())
                                     .commit()

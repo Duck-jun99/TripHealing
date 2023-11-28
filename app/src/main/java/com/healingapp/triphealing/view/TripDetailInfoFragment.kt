@@ -10,12 +10,14 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.gson.JsonSyntaxException
 import com.healingapp.triphealing.R
 import com.healingapp.triphealing.TripDetailActivity
+import com.healingapp.triphealing.adapter.TripAnotherAdapter
 import com.healingapp.triphealing.adapter.TripDetailAdapter
 import com.healingapp.triphealing.databinding.FragmentTripDetail1Binding
 import com.healingapp.triphealing.databinding.FragmentTripDetailInfoBinding
@@ -154,6 +156,19 @@ class TripDetailInfoFragment: Fragment() {
             }
 
 
+        }
+
+        setFragmentResultListener("requestKey2") {requestKey2, bundle ->
+            //var anotherRegionItem = bundle.getParcelableArrayList("anotherRegion",ItemTripDetailRV::class.java)
+            var anotherRegionItem = bundle.getParcelableArrayList("anotherRegion",ItemTripDetailRV::class.java)
+            Log.e("setFragmentResultListener",anotherRegionItem.toString())
+
+            var tripAnotherAdapter = anotherRegionItem?.let { TripAnotherAdapter(it) }
+
+            binding.rvAnotherTrip.adapter = tripAnotherAdapter
+            binding.rvAnotherTrip.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+            tripAnotherAdapter!!.notifyDataSetChanged()
         }
 
 
