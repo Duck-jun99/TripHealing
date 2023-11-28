@@ -107,9 +107,4 @@ dependencies {
 
     //ViewPager2
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
-
-
-    //Kakao Map
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(files("libs/libDaumMapAndroid.jar"))
 }

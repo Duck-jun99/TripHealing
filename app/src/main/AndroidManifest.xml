@@ -99,7 +99,7 @@
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="9fba1f073802881d8d44b77082d5a318" />
+            android:value="@string/native_key_Kakao_SDK" />
 
     </application>
 
