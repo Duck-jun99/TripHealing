@@ -50,6 +50,7 @@ class TripDetailFragment1: Fragment() {
         var codeArray = (activity as TripDetailActivity).codeArray
         var areaCode = (activity as TripDetailActivity).areaCode
         var position = (activity as TripDetailActivity).position
+        var regionName = (activity as TripDetailActivity).regionName
 
         Log.e("TripDetailFragment",codeArray.toString())
         Log.e("TripDetailFragment",position.toString())

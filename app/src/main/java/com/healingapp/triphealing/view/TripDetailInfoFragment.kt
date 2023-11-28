@@ -69,6 +69,9 @@ class TripDetailInfoFragment: Fragment() {
         var areaCode = (activity as TripDetailActivity).areaCode
         var position = (activity as TripDetailActivity).position
         var contentId = ""
+        var regionName = (activity as TripDetailActivity).regionName
+
+        binding.tvAnotherTrip.text=HtmlCompat.fromHtml("<b>${regionName}</b>의 다른 관광지는 어때요?",HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         Log.e("TripDetailFragment",codeArray.toString())
         Log.e("TripDetailFragment",position.toString())

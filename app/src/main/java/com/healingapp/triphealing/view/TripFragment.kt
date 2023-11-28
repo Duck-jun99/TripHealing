@@ -85,6 +85,7 @@ class TripFragment : Fragment() {
 
         var codeArray = ArrayList<String>()
         var areaCode:Int = 0
+        var region:String = ""
 
         binding.rvSiGu.adapter = siguRvAdapter
         binding.rvSiGu.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
@@ -416,6 +417,7 @@ class TripFragment : Fragment() {
                 intent.putStringArrayListExtra("codeArray",codeArray)
                 intent.putExtra("areaCode",areaCode)
                 intent.putExtra("position",position)
+                intent.putExtra("regionName",siguRvitemList[position].region)
                 startActivity(intent)
             }
 

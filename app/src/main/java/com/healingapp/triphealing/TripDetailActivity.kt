@@ -24,6 +24,7 @@ class TripDetailActivity : AppCompatActivity() {
     lateinit var codeArray:ArrayList<String>
     var areaCode:Int = 0
     var position:Int = 0
+    lateinit var regionName:String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTripBinding.inflate(layoutInflater)
@@ -32,6 +33,7 @@ class TripDetailActivity : AppCompatActivity() {
         codeArray = intent.getStringArrayListExtra("codeArray")!!
         areaCode = intent.getIntExtra("areaCode",0)
         position = intent.getIntExtra("position",0)
+        regionName = intent.getStringExtra("regionName")!!
 
         initViewPager()
 
@@ -65,6 +67,8 @@ class TripDetailActivity : AppCompatActivity() {
             }
         }.attach()
     }
+
+
 
 }
 
