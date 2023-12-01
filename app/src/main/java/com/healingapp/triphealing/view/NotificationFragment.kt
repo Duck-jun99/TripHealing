@@ -7,15 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.healingapp.triphealing.adapter.FamRvAdapter
 import com.healingapp.triphealing.adapter.NotificationRvAdapter
 import com.healingapp.triphealing.databinding.FragmentNotificationBinding
-import com.healingapp.triphealing.db.NotificationDatabase
+import com.healingapp.triphealing.db.TripDatabase
 import com.healingapp.triphealing.db.NotificationEntity
-import com.healingapp.triphealing.network.post.ItemFamRV
 import com.healingapp.triphealing.utils.SwipeController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +23,7 @@ class NotificationFragment : Fragment() {
     private var _binding: FragmentNotificationBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var db: NotificationDatabase
+    private lateinit var db: TripDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -63,7 +60,7 @@ class NotificationFragment : Fragment() {
         binding.recNotification.layoutManager = manager
 
 
-        db = context?.let { NotificationDatabase.getInstance(it) }!!
+        db = context?.let { TripDatabase.getInstance(it) }!!
         CoroutineScope(Dispatchers.Main).launch {
             val data = CoroutineScope(Dispatchers.IO).async {
                 db.notificationDao().getAll()

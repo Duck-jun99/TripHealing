@@ -14,8 +14,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.healingapp.triphealing.MainActivity
 import com.healingapp.triphealing.R
-import com.healingapp.triphealing.db.NotificationDAO
-import com.healingapp.triphealing.db.NotificationDatabase
+import com.healingapp.triphealing.db.TripDatabase
 import com.healingapp.triphealing.db.NotificationEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +26,7 @@ class FCMService : FirebaseMessagingService() {
      * 2. Data: 실행중이거나 백그라운드(앱이 실행중이지 않을때) 알림이 옴 -> 대부분 사용하는 방식 */
 
     private val TAG = "FirebaseService"
-    private var db: NotificationDatabase? = null
+    private var db: TripDatabase? = null
 
     /** Token 생성 메서드(FirebaseInstanceIdService 사라짐) */
     override fun onNewToken(token: String) {
@@ -44,7 +43,7 @@ class FCMService : FirebaseMessagingService() {
     /** 메시지 수신 메서드(포그라운드) */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: " + remoteMessage!!.from)
-        db = NotificationDatabase.getInstance(applicationContext)
+        db = TripDatabase.getInstance(applicationContext)
 
         // Notification 메시지를 수신할 경우
         // remoteMessage.notification?.body!! 여기에 내용이 저장되있음

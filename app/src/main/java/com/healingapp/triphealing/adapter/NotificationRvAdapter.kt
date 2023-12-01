@@ -2,26 +2,20 @@ package com.healingapp.triphealing.adapter
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.healingapp.triphealing.R
-import com.healingapp.triphealing.db.NotificationDatabase
+import com.healingapp.triphealing.db.TripDatabase
 import com.healingapp.triphealing.db.NotificationEntity
-import com.healingapp.triphealing.network.post.ItemFamRV
-import com.healingapp.triphealing.network.post.ItemRecRV
-import com.healingapp.triphealing.secret.Secret
 import com.healingapp.triphealing.utils.ItemTouchHelperListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 
 class NotificationRvAdapter(private val context: Context, val itemList: ArrayList<NotificationEntity>) :
@@ -35,7 +29,7 @@ class NotificationRvAdapter(private val context: Context, val itemList: ArrayLis
 
     override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            if (NotificationDatabase.getInstance(holder.back.context)?.notificationDao()
+            if (TripDatabase.getInstance(holder.back.context)?.notificationDao()
                     ?.getNotification(position + 1) != 1
             ) {
                 holder.back.setBackgroundColor(Color.WHITE)
@@ -89,7 +83,7 @@ class NotificationRvAdapter(private val context: Context, val itemList: ArrayLis
 
     override fun onRightClick(position: Int, viewHolder: RecyclerView.ViewHolder?) {
         CoroutineScope(Dispatchers.IO).launch {
-            NotificationDatabase.getInstance(context)?.notificationDao()
+            TripDatabase.getInstance(context)?.notificationDao()
                 ?.deleteNotification(position)
         }
     }
