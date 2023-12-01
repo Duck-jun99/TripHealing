@@ -125,7 +125,7 @@ class TripDetailInfoFragment: Fragment() {
                             response: Response<NetworkTripDetailInfoResponse>
                         ) {
                             Log.e("TripInterface_onResponse",response.body().toString())
-                            binding.tvTitleTripDetailInfo.text = response.body()!!.response.body.items.item[0].title
+                            binding.tvTitleTripDetailInfo.text = HtmlCompat.fromHtml(response.body()!!.response.body.items.item[0].title,HtmlCompat.FROM_HTML_MODE_LEGACY)
                             binding.imgTripDetailInfo.apply {
                                 Glide.with(this)
                                     .load(response.body()!!.response.body.items.item[0].firstimage)
@@ -139,10 +139,10 @@ class TripDetailInfoFragment: Fragment() {
                             if((response.body()!!.response.body.items.item[0].mapy != null) and (response.body()!!.response.body.items.item[0].mapx != null)){
                                 Log.e("Not Null", "Not Null")
                                 mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(response.body()!!.response.body.items.item[0].mapy.toDouble(), response.body()!!.response.body.items.item[0].mapx.toDouble()), false)
-                                marker.itemName = "임시"
+                                marker.itemName = response.body()!!.response.body.items.item[0].title
                                 marker.tag = 0
                                 marker.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.response.body.items.item[0].mapy.toDouble(), response.body()!!.response.body.items.item[0].mapx.toDouble())
-                                marker.markerType = MapPOIItem.MarkerType.BluePin
+                                marker.markerType = MapPOIItem.MarkerType.RedPin
 
                                 mapView.addPOIItem(marker)
                                 binding.mapView.addView(mapView)
@@ -157,14 +157,13 @@ class TripDetailInfoFragment: Fragment() {
 
                             if(t is JsonSyntaxException){
                                 if(currentRetry<maxRetries){
-                                    retryTripRequest(areaCode.toString(),code.toString())
+                                    retryTripRequest(areaCode.toString(),code.toString(),contentId,mapView,marker)
                                     currentRetry++
                                 }
                                 else{
                                     Toast.makeText(requireContext(),"서버통신 실패", Toast.LENGTH_SHORT).show()
                                 }
                             }
-
 
                         }
 
@@ -177,9 +176,9 @@ class TripDetailInfoFragment: Fragment() {
 
         setFragmentResultListener("requestKey2") {requestKey2, bundle ->
 
-            var anotherRegionItem = bundle.getParcelableArrayList("anotherRegion",ItemTripDetailRV::class.java)
 
             try{
+                var anotherRegionItem = bundle.getParcelableArrayList("anotherRegion",ItemTripDetailRV::class.java)
                 Log.e("setFragmentResultListener",anotherRegionItem.toString())
 
                 var tripAnotherAdapter = anotherRegionItem?.let { TripAnotherAdapter(it) }
@@ -191,7 +190,14 @@ class TripDetailInfoFragment: Fragment() {
 
             }catch (e: IllegalArgumentException){
                 Toast.makeText(requireContext(),"안드로이드를 업데이트해주세요!",Toast.LENGTH_SHORT).show()
+                binding.tvAnotherTrip.text=HtmlCompat.fromHtml("안드로이드 버전을 업데이트해주세요.",HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
+            catch (e: NoSuchMethodError){
+                Toast.makeText(requireContext(),"안드로이드를 업데이트해주세요!",Toast.LENGTH_SHORT).show()
+                binding.tvAnotherTrip.text=HtmlCompat.fromHtml("안드로이드 버전을 업데이트해주세요.",HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
+
+
         }
 
         //MapView 스크롤을 위해(ScrollView에 움직임 뺏기지 않게 함)
@@ -207,43 +213,74 @@ class TripDetailInfoFragment: Fragment() {
 
     }
 
-    private fun retryTripRequest(areaCode:String, code:String){
-        TripInterface.create().getNetwork(
-            numOfRows=0,
+    private fun retryTripRequest(areaCode:String, code:String, contentId:String, mapView:MapView, marker:MapPOIItem){
+        TripInterface.create().getDetailNetwork(
+            MobileOS = "AND",
+            MobileApp = "TripHealing",
+            serviceKey = resources.getString(R.string.api_key_decoding_data_go_kr),
+            _type = "json",
+            contentId =contentId, //TripDetailFragment에서 contentId넘겨줌.
+            defaultYN = "Y",
+            firstImageYN = "Y",
+            areacodeYN = "Y",
+            addrinfoYN = "Y",
+            mapinfoYN = "Y",
+            overviewYN = "Y"
+            /*numOfRows=0,
             pageNo=0,
             MobileOS="AND",
             MobileApp="TripHealing",
-            serviceKey=resources.getString(R.string.api_key_encoding_data_go_kr),
+            serviceKey=resources.getString(R.string.api_key_decoding_data_go_kr),
             _type="json",
-            contentTypeId="12", //12:관광지
+            contentTypeId="12", //12:관광지 14:문화시설 32:숙박
             areaCode=areaCode.toString(),
             sigunguCode=code.toString(),
-        ).enqueue(object :Callback<NetworkTripResponse>{
-            override fun onResponse(
-                call: Call<NetworkTripResponse>,
-                response: Response<NetworkTripResponse>
-            ) {
-                currentRetry=0
-                Log.e("TripInterface_onResponse",response.body().toString())
-                for(i:Int in 0 until response.body()!!.response.body.items.item.size){
-                    var addr = response.body()!!.response.body.items.item[i].addr1
-                    var title = response.body()!!.response.body.items.item[i].title
-                    var img = response.body()!!.response.body.items.item[i].firstimage
 
+             */
+        ).enqueue(object : Callback<NetworkTripDetailInfoResponse> {
+            override fun onResponse(
+                call: Call<NetworkTripDetailInfoResponse>,
+                response: Response<NetworkTripDetailInfoResponse>
+            ) {
+                Log.e("TripInterface_onResponse",response.body().toString())
+                currentRetry = 0
+                binding.tvTitleTripDetailInfo.text = response.body()!!.response.body.items.item[0].title
+                binding.imgTripDetailInfo.apply {
+                    Glide.with(this)
+                        .load(response.body()!!.response.body.items.item[0].firstimage)
+                        .error(R.drawable.tree)
+                        .into(this)
                 }
+                binding.tvTextTripDetailInfo.text = HtmlCompat.fromHtml(response.body()!!.response.body.items.item[0].overview,HtmlCompat.FROM_HTML_MODE_LEGACY)
+                binding.tvAddrTripDetailInfo.text = response.body()!!.response.body.items.item[0].addr1
+                //binding.tvHomepageTripDetailInfo.text = HtmlCompat.fromHtml(response.body()!!.response.body.items.item[0].homepage,HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+                if((response.body()!!.response.body.items.item[0].mapy != null) and (response.body()!!.response.body.items.item[0].mapx != null)){
+                    Log.e("Not Null", "Not Null")
+                    mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(response.body()!!.response.body.items.item[0].mapy.toDouble(), response.body()!!.response.body.items.item[0].mapx.toDouble()), false)
+                    marker.itemName = response.body()!!.response.body.items.item[0].title
+                    marker.tag = 0
+                    marker.mapPoint = MapPoint.mapPointWithGeoCoord(response.body()!!.response.body.items.item[0].mapy.toDouble(), response.body()!!.response.body.items.item[0].mapx.toDouble())
+                    marker.markerType = MapPOIItem.MarkerType.RedPin
+
+                    mapView.addPOIItem(marker)
+                    binding.mapView.addView(mapView)
+                }
+
             }
 
-            override fun onFailure(call: Call<NetworkTripResponse>, t: Throwable) {
+            override fun onFailure(call: Call<NetworkTripDetailInfoResponse>, t: Throwable) {
                 //TODO("Not yet implemented")
                 Log.e("TripInterface_onFailure",t.message.toString())
+                Log.e("TripInterface_onFailure",t.toString())
 
                 if(t is JsonSyntaxException){
                     if(currentRetry<maxRetries){
-                        retryTripRequest(areaCode.toString(),code.toString())
+                        retryTripRequest(areaCode.toString(),code.toString(),contentId,mapView,marker)
                         currentRetry++
                     }
                     else{
-                        Toast.makeText(requireContext(),"서버통신 실패",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(),"서버통신 실패", Toast.LENGTH_SHORT).show()
                     }
                 }
 

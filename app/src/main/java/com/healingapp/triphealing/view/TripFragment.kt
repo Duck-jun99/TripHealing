@@ -62,23 +62,7 @@ class TripFragment : Fragment() {
         binding.rvRegion.adapter = regionRvAdapter
         binding.rvRegion.layoutManager = GridLayoutManager(requireActivity(),1, GridLayoutManager.HORIZONTAL, false)
 
-        regionRvitemList.add(ItemRegionRV("서울",R.drawable.seoul))
-        regionRvitemList.add(ItemRegionRV("인천",R.drawable.incheon))
-        regionRvitemList.add(ItemRegionRV("대전",R.drawable.daejeon))
-        regionRvitemList.add(ItemRegionRV("대구",R.drawable.daegu))
-        regionRvitemList.add(ItemRegionRV("광주",R.drawable.gwangju))
-        regionRvitemList.add(ItemRegionRV("부산",R.drawable.busan))
-        regionRvitemList.add(ItemRegionRV("울산",R.drawable.ulsan))
-        regionRvitemList.add(ItemRegionRV("세종",R.drawable.sejong))
-        regionRvitemList.add(ItemRegionRV("경기도",R.drawable.gyeonggi))
-        regionRvitemList.add(ItemRegionRV("강원도",R.drawable.gangwon))
-        regionRvitemList.add(ItemRegionRV("충청북도",R.drawable.chungcheongbuk))
-        regionRvitemList.add(ItemRegionRV("충청남도",R.drawable.chungcheongnam))
-        regionRvitemList.add(ItemRegionRV("경상북도",R.drawable.gyeongsangbuk))
-        regionRvitemList.add(ItemRegionRV("경상남도",R.drawable.gyeongsangnam))
-        regionRvitemList.add(ItemRegionRV("전라북도",R.drawable.jeollabuk))
-        regionRvitemList.add(ItemRegionRV("전라남도",R.drawable.jeollanam))
-        regionRvitemList.add(ItemRegionRV("제주도",R.drawable.jeju))
+        initregionRvitem(regionRvitemList)
 
         var siguRvitemList = ArrayList<ItemSiGuRV>()
         var siguRvAdapter = SiGuAdapter(siguRvitemList)
@@ -431,12 +415,32 @@ class TripFragment : Fragment() {
             }
 
             else{
-                binding.tvTrip.text = HtmlCompat.fromHtml("<b>Guest님!<b> 어디로 떠날까요?", HtmlCompat.FROM_HTML_MODE_LEGACY)
+                binding.tvTrip.text = HtmlCompat.fromHtml("<b>Guest님!</b> 어디로 떠날까요?", HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
 
         })
 
 
+    }
+
+    private fun initregionRvitem(regionRvitemList: ArrayList<ItemRegionRV>) {
+        regionRvitemList.add(ItemRegionRV("서울",R.drawable.seoul))
+        regionRvitemList.add(ItemRegionRV("인천",R.drawable.incheon))
+        regionRvitemList.add(ItemRegionRV("대전",R.drawable.daejeon))
+        regionRvitemList.add(ItemRegionRV("대구",R.drawable.daegu))
+        regionRvitemList.add(ItemRegionRV("광주",R.drawable.gwangju))
+        regionRvitemList.add(ItemRegionRV("부산",R.drawable.busan))
+        regionRvitemList.add(ItemRegionRV("울산",R.drawable.ulsan))
+        regionRvitemList.add(ItemRegionRV("세종",R.drawable.sejong))
+        regionRvitemList.add(ItemRegionRV("경기도",R.drawable.gyeonggi))
+        regionRvitemList.add(ItemRegionRV("강원도",R.drawable.gangwon))
+        regionRvitemList.add(ItemRegionRV("충청북도",R.drawable.chungcheongbuk))
+        regionRvitemList.add(ItemRegionRV("충청남도",R.drawable.chungcheongnam))
+        regionRvitemList.add(ItemRegionRV("경상북도",R.drawable.gyeongsangbuk))
+        regionRvitemList.add(ItemRegionRV("경상남도",R.drawable.gyeongsangnam))
+        regionRvitemList.add(ItemRegionRV("전라북도",R.drawable.jeollabuk))
+        regionRvitemList.add(ItemRegionRV("전라남도",R.drawable.jeollanam))
+        regionRvitemList.add(ItemRegionRV("제주도",R.drawable.jeju))
     }
 
 }

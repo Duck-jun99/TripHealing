@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -40,6 +41,9 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.tvSetting.text = HtmlCompat.fromHtml("<b>설정</b>",
+            HtmlCompat.FROM_HTML_MODE_LEGACY)
 
         viewModelPost = ViewModelProvider(requireActivity())[NetworkViewModel::class.java]
         viewModelUser = ViewModelProvider(requireActivity())[UserViewModel::class.java]
